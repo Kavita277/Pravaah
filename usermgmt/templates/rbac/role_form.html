@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %} PRAVAAH - Add New Role {% endblock %}
+
+{% block content %}
+<div class="container my-2" style="max-width: 600px;">
+    <div class="card shadow-sm border-0 border-top border-primary border-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-dark fw-bold">
+                <i class="fa-solid fa-plus me-2 text-primary"></i>Configure New System Role
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" action="{% url 'usermgmt:role_add' %}">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="roleName" class="form-label fw-bold small text-secondary">Role Designation Name</label>
+                    <input type="text" 
+                           class="form-control form-control-lg shadow-none fs-6" 
+                           id="roleName" 
+                           name="role_name" 
+                           placeholder="e.g., Training Manager, Hostel Admin" 
+                           required>
+                    <div class="form-text text-muted small mt-1">
+                        Ensure the group role designation matches the core architecture specification rules.
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'usermgmt:roles_list' %}" class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>Save System Role
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

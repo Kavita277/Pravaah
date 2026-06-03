@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)file:///C:/Users/Kavita/Downloads/base.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head><body class="bg-light d-flex flex-column min-vh-100">{% load static %}
+    {% load auth_extras %}
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} PRAVAAH {% endblock %}</title>
+    <link href="./{} PRAVAAH {}_files/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./{} PRAVAAH {}_files/all.min.css">
+    <link rel="stylesheet" href="file:///C:/Users/Kavita/Downloads/%7B%%20static%20&#39;css/style.css&#39;%20%%7D">
+  
+
+  
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3 shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-uppercase tracking-wider" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:admin_dashboard&#39;%20%%7D">
+          <i class="fa-solid fa-graduation-cap text-info me-1"></i>
+          PRAVAAH ERP
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2">
+            <li class="nav-item">
+              <a class="nav-link active" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:user_home&#39;%20%%7D"> Dashboard </a>
+            </li>
+
+            {% if user.is_superuser or not user|has_group:"Trainer" %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                User Management
+              </a>
+              <ul class="dropdown-menu shadow border-0 mt-2">
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:register&#39;%20%%7D">
+                    <i class="fa-solid fa-user-plus me-2 text-muted"></i>Register New User
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:users_list&#39;%20%%7D">
+                    <i class="fa-solid fa-users me-2 text-muted"></i>User Workspace / View List
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:roles_list&#39;%20%%7D">
+                    <i class="fa-solid fa-shield-halved me-2 text-muted"></i>Roles &amp; Permissions Board
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:permission_matrix&#39;%20%%7D">
+                    <i class="fa-solid fa-table-cells me-2 text-muted"></i>Global Authorization Matrix
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:audit_logs&#39;%20%%7D">
+                    <i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Central Audit Logging Files
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:activity_dashboard&#39;%20%%7D">
+                    <i class="fa-solid fa-chart-line me-2 text-muted"></i>Analytical Tracking Dashboards
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Participants </a>
+            </li>
+            {% endif %}
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Trainers
+              </a>
+              <ul class="dropdown-menu shadow border-0 mt-2">
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-file-invoice me-2 text-muted"></i>Trainer Dashboard
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            {% if user.is_superuser or not user|has_group:"Trainer" %}
+            <li class="nav-item">
+              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Courses </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Hostel </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:reports&#39;%20%%7D"> Reports </a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Proposals &amp; Marketing
+              </a>
+              <ul class="dropdown-menu shadow border-0 mt-2">
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-chart-line me-2 text-muted"></i>Proposals Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-plus me-2 text-muted"></i>Create Proposal
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-list-check me-2 text-muted"></i>Gate 0 Feasibility
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-clipboard-check me-2 text-muted"></i>Gate Approvals
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
+                    <i class="fa-solid fa-bullseye me-2 text-muted"></i>Marketing Queue
+                  </a>
+                </li>
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+
+          <form class="d-flex gap-2" role="search">
+            <input class="form-control" type="search" placeholder="Search Module" aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">Search</button>
+          </form>
+
+          {% if user.is_authenticated %}
+            <ul class="navbar-nav ms-2 align-items-center gap-2">
+              <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center gap-1" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:profile&#39;%20%%7D">
+                  <i class="fa-solid fa-user-circle fs-5 text-info"></i>
+                  <span>Profile ({{ user.username }})</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="btn btn-sm btn-danger px-3 text-white d-flex align-items-center gap-1" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:logout&#39;%20%%7D">
+                  <i class="fa-solid fa-power-off"></i> Logout
+                </a>
+              </li>
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-3">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="container mt-4 mb-5 flex-grow-1">
+      <div class="row">
+        <main class="col-12">
+          {% block content %} {% endblock %}
+        </main>
+        {% block sidebar %} {% endblock %}
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto border-top border-secondary border-opacity-20">
+      <div class="container">
+        <div class="row g-4 mb-4 text-center text-md-start">
+          <div class="col-lg-5 col-md-6 col-12">
+            <h5 class="text-info fw-bold mb-3">
+              <i class="fa-solid fa-layer-group me-1"></i> PRAVAAH ERP Suite
+            </h5>
+            <p class="small text-white-50 lh-lg">
+              An advanced institutional framework designed for complete tracking solutions.
+              Streamlines student administration, trainer mapping workflows, course material
+              delivery grids, and secure role authorization workflows natively.
+            </p>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12 ps-md-5">
+            <h6 class="text-uppercase text-white fw-bold tracking-wider mb-3 small">Quick Navigation</h6>
+            <ul class="list-unstyled text-white-50 small d-grid gap-2">
+              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:user_home&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Portal Hub Dashboard</a></li>
+              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:users_list&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> User Workspaces</a></li>
+              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:reports&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Analytical Management Reports</a></li>
+              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:profile&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Personal Profiles Control</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-12 col-12">
+            <h6 class="text-uppercase text-white fw-bold tracking-wider mb-3 small">Contact &amp; Support Hub</h6>
+            <ul class="list-unstyled text-white-50 small d-grid gap-2">
+              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                <i class="fa-solid fa-location-dot text-info"></i>
+                <span>Pravaah</span>
+              </li>
+              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                <i class="fa-solid fa-envelope text-info"></i>
+                <a href="mailto:support@pravaah-erp.edu" class="text-reset text-decoration-none">support@pravaah-erp.edu</a>
+              </li>
+              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                <i class="fa-solid fa-phone text-info"></i>
+                <span>+91 (22) 2419 8257</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <hr class="border-secondary opacity-25 my-4">
+        <div class="row align-items-center justify-content-between g-3 text-center text-md-start text-white-50 small">
+          <div class="col-md-7 font-monospace">
+            © 2026 Copyright System Operations Team. All Rights Reserved.
+          </div>
+          <div class="col-md-5 text-md-end text-center">
+            <div class="d-flex justify-content-center justify-content-md-end gap-3 fs-5">
+              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-facebook"></i></a>
+              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-twitter"></i></a>
+              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-linkedin"></i></a>
+              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <style>
+      .footer-link:hover {
+        color: #0dcaf0 !important;
+        padding-left: 4px;
+        transition: all 0.2s ease-in-out;
+      }
+    </style>
+
+    <script src="./{} PRAVAAH {}_files/bootstrap.bundle.min.js.download"></script>
+  
+
+</body></html>

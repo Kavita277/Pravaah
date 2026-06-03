@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %} PRAVAAH - System Roles {% endblock %}
+
+{% block content %}
+<div class="container my-2">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Application Roles</h2>
+            <p class="text-muted small mb-0">Overview of configured user security authorization groups.</p>
+        </div>
+        <a href="{% url 'usermgmt:role_add' %}" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>Create New Role
+        </a>
+    </div>
+
+    <div class="table-responsive bg-white border rounded p-3 shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 20%">Role ID</th>
+                    <th style="width: 80%">Role Designation Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for role in roles %}
+                <tr>
+                    <td>{{ role.id }}</td>
+                    <td><strong>{{ role.name }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted py-4">No roles found. Use the button above to add one!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

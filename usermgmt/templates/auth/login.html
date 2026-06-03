@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center py-5">
+  <div class="col-12 col-md-8 col-lg-5">
+    <div class="card shadow border-0 rounded-3 bg-white">
+      <div class="card-body p-4 p-md-5">
+        
+        <div class="text-center mb-4">
+          <i class="fa-solid fa-lock text-info fs-1 mb-2"></i>
+          <h2 class="fw-bold text-dark h3">Sign In</h2>
+          <p class="text-muted small">Access the PRAVAAH ERP Management Suite platform</p>
+        </div>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger border-0 shadow-sm small py-2.5 mb-4 d-flex align-items-center gap-2" role="alert">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'usermgmt:login' %}">
+          {% csrf_token %}
+          
+          <div class="mb-4">
+            <label class="form-label fw-medium text-secondary small" for="username">Username or Email</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-user small"></i></span>
+              <input type="text" id="username" name="username" class="form-control bg-light border-start-0" 
+                     autocomplete="username" placeholder="Enter your username or email address" required aria-required="true" />
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-medium text-secondary small" for="password">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-key small"></i></span>
+              <input type="password" id="password" name="password" class="form-control bg-light border-start-0" 
+                     autocomplete="current-password" placeholder="••••••••" required aria-required="true" />
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center small">
+            <div class="col-6">
+              <div class="form-check m-0">
+                <input class="form-check-input" type="checkbox" name="remember" value="1" id="rememberMe" checked />
+                <label class="form-check-label text-muted fw-medium" for="rememberMe"> Remember me </label>
+              </div>
+            </div>
+            <div class="col-6 text-end">
+              <a href="{% url 'usermgmt:forgot_password' %}" class="text-info text-decoration-none fw-semibold">Forgot password?</a>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase tracking-wide mb-4 shadow-sm">
+            <i class="fa-solid fa-right-to-bracket me-1 text-info"></i> Authenticate Account
+          </button>
+
+          <div class="d-flex align-items-center mb-4">
+            <hr class="flex-grow-1 text-muted opacity-25 m-0">
+            <span class="mx-3 text-uppercase text-muted font-monospace x-small tracking-wider">Alternative Access Channels</span>
+            <hr class="flex-grow-1 text-muted opacity-25 m-0">
+          </div>
+
+          <div class="d-flex justify-content-center align-items-center gap-3">
+            <button type="button" class="btn btn-outline-secondary rounded-circle px-3 py-2 border-opacity-50 hover-bg-light" title="Sign in with Google">
+              <i class="fab fa-google text-danger"></i>
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary rounded-circle px-3 py-2 border-opacity-50 hover-bg-light" title="Sign in with Twitter">
+              <i class="fab fa-twitter text-primary"></i>
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary rounded-circle px-3 py-2 border-opacity-50 hover-bg-light" title="Sign in with GitHub">
+              <i class="fab fa-github text-dark"></i>
+            </button>
+          </div>
+
+        </form>
+      </div> </div>
+    
+    
+
+  </div>
+</div>
+{% endblock %}

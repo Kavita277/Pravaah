@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} PRAVAAH - Assign User Role {% endblock %}
+
+{% block content %}
+<div class="container my-2" style="max-width: 650px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0"><i class="fa-solid fa-user-shield me-2"></i>Assign Single System Role to User</h5>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" action="{% url 'usermgmt:assign_role' %}">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="userSelect" class="form-label fw-bold small">Select Target User Profile</label>
+                    <select class="form-select" id="userSelect" name="user_id" required>
+                        <option value="" disabled selected>Choose user account...</option>
+                        {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small d-block mb-2">Select System Designation Role</label>
+                    <div class="border rounded p-3 bg-light">
+                        {% for role in roles %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="role_name" value="{{ role.name }}" id="role_{{ role.id }}" required>
+                            <label class="form-check-label" for="role_{{ role.id }}">
+                                <strong>{{ role.name }}</strong>
+                            </label>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0">No roles available. Seed the database first.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success px-4">Update Role Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

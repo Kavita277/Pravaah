@@ -1,0 +1,660 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <h2 class="mb-4">
+
+        Activity Dashboard
+
+    </h2>
+
+    <!-- MAIN STATS -->
+
+    <div class="row mb-4">
+
+        <!-- TOTAL USERS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card text-white bg-primary shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Total Users</h6>
+
+                    <h2>{{ total_users }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOTAL LOGS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card text-white bg-success shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Total Logs</h6>
+
+                    <h2>{{ total_logs }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOTAL ROLES -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card text-white bg-warning shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Total Roles</h6>
+
+                    <h2>{{ total_roles }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOTAL LOGINS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card text-white bg-danger shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Total Logins</h6>
+
+                    <h2>{{ login_count }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- EXTRA ANALYTICS -->
+
+    <div class="row mb-4">
+
+        <!-- ACTIVE USERS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card bg-info text-white shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Active Users</h6>
+
+                    <h2>{{ active_users_count }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FAILED LOGINS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card bg-secondary text-white shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Failed Logins</h6>
+
+                    <h2>{{ failed_logins }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOP ROLE -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card bg-dark text-white shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Top Role</h6>
+
+                    <h5>
+
+                        {% if top_role %}
+
+                            {{ top_role.role_name }}
+
+                        {% else %}
+
+                            N/A
+
+                        {% endif %}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RECENT REGISTRATIONS -->
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card bg-warning text-dark shadow h-100">
+
+                <div class="card-body">
+
+                    <h6>Recent Registrations</h6>
+
+                    <h2>{{ recent_registrations|length }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RECENT USERS -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            Recent Registrations
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for user in recent_registrations %}
+
+                        <tr>
+
+                            <td>{{ user.username }}</td>
+
+                            <td>{{ user.email }}</td>
+
+                            <td>{{ user.status }}</td>
+
+                            <td>{{ user.created_at }}</td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center">
+
+                                No recent users found
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RECENT ACTIVITIES -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-dark text-white">
+
+            Recent Activities
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>IP Address</th>
+                            <th>Time</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for log in recent_logs %}
+
+                        <tr>
+
+                            <td>{{ log.user.username }}</td>
+
+                            <td>{{ log.action }}</td>
+
+                            <td>{{ log.ip_address }}</td>
+
+                            <td>{{ log.created_at }}</td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center">
+
+                                No recent activities found
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+
+    <div class="row">
+
+        <!-- SYSTEM OVERVIEW -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow h-100">
+
+                <div class="card-header bg-primary text-white">
+
+                    System Overview
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:300px;">
+
+                        <canvas id="dashboardChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ROLE DISTRIBUTION -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow h-100">
+
+                <div class="card-header bg-dark text-white">
+
+                    Role Distribution
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:300px;">
+
+                        <canvas id="roleChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <!-- USER STATUS -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow h-100">
+
+                <div class="card-header bg-success text-white">
+
+                    User Status
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:300px;">
+
+                        <canvas id="statusChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- AUDIT ACTIONS -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow h-100">
+
+                <div class="card-header bg-info text-white">
+
+                    Audit Actions
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:300px;">
+
+                        <canvas id="auditChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+// SYSTEM OVERVIEW
+
+new Chart(
+
+    document.getElementById('dashboardChart'),
+
+    {
+
+        type: 'bar',
+
+        data: {
+
+            labels: [
+
+                'Users',
+                'Logs',
+                'Roles',
+                'Logins'
+
+            ],
+
+            datasets: [{
+
+                label: 'System Data',
+
+                data: [
+
+                    {{ total_users }},
+                    {{ total_logs }},
+                    {{ total_roles }},
+                    {{ login_count }}
+
+                ],
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// ROLE DISTRIBUTION
+
+new Chart(
+
+    document.getElementById('roleChart'),
+
+    {
+
+        type: 'pie',
+
+        data: {
+
+            labels: [
+
+                'Admin',
+                'Manager',
+                'QA'
+
+            ],
+
+            datasets: [{
+
+                data: [
+
+                    {{ admin_count }},
+                    {{ manager_count }},
+                    {{ qa_count }}
+
+                ]
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+
+    }
+
+);
+
+
+// USER STATUS
+
+new Chart(
+
+    document.getElementById('statusChart'),
+
+    {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: [
+
+                'Active',
+                'Inactive'
+
+            ],
+
+            datasets: [{
+
+                data: [
+
+                    {{ active_users }},
+                    {{ inactive_users }}
+
+                ]
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+
+    }
+
+);
+
+
+// AUDIT ACTIONS
+
+new Chart(
+
+    document.getElementById('auditChart'),
+
+    {
+
+        type: 'bar',
+
+        data: {
+
+            labels: [
+
+                'Login',
+                'Logout',
+                'Profile Updated'
+
+            ],
+
+            datasets: [{
+
+                label: 'Audit Activity',
+
+                data: [
+
+                    {{ login_actions }},
+                    {{ logout_actions }},
+                    {{ update_actions }}
+
+                ],
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-bold">
+
+            Audit Logs
+
+        </h2>
+
+    </div>
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <!-- FILTER FORM -->
+
+            <form method="GET">
+
+                <div class="row mb-4">
+
+                    <!-- SEARCH -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Search Username
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Enter username"
+                            value="{{ search }}">
+
+                    </div>
+
+                    <!-- ACTION FILTER -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Action
+
+                        </label>
+
+                        <select
+                            name="action"
+                            class="form-select">
+
+                            <option value="">
+
+                                All Actions
+
+                            </option>
+
+                            <option value="Login">
+
+                                Login
+
+                            </option>
+
+                            <option value="Logout">
+
+                                Logout
+
+                            </option>
+
+                            <option value="Profile Updated">
+
+                                Profile Updated
+
+                            </option>
+
+                            <option value="Password Changed">
+
+                                Password Changed
+
+                            </option>
+
+                            <option value="User Created">
+
+                                User Created
+
+                            </option>
+
+                            <option value="User Deleted">
+
+                                User Deleted
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- FILTER BUTTON -->
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100">
+
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                    <!-- RESET BUTTON -->
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <a
+                            href="/audit-logs/"
+                            class="btn btn-secondary w-100">
+
+                            Reset
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <!-- TABLE -->
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                User
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                            <th>
+                                IP Address
+                            </th>
+
+                            <th>
+                                Timestamp
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for log in logs %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ log.log_id }}
+
+                            </td>
+
+                            <td>
+
+                                {{ log.user.username }}
+
+                            </td>
+
+                            <td>
+
+                                {% if log.action == 'Login' %}
+
+                                    <span class="badge bg-success">
+
+                                        {{ log.action }}
+
+                                    </span>
+
+                                {% elif log.action == 'Logout' %}
+
+                                    <span class="badge bg-secondary">
+
+                                        {{ log.action }}
+
+                                    </span>
+
+                                {% elif log.action == 'Password Changed' %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        {{ log.action }}
+
+                                    </span>
+
+                                {% elif log.action == 'User Deleted' %}
+
+                                    <span class="badge bg-danger">
+
+                                        {{ log.action }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-primary">
+
+                                        {{ log.action }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {{ log.ip_address }}
+
+                            </td>
+
+                            <td>
+
+                                {{ log.created_at }}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center text-muted">
+
+                                No audit logs found
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- PAGINATION -->
+
+<nav class="mt-4">
+
+    <ul class="pagination justify-content-center">
+
+        <!-- PREVIOUS -->
+
+        {% if page_obj.has_previous %}
+
+        <li class="page-item">
+
+            <a class="page-link"
+               href="?page={{ page_obj.previous_page_number }}">
+
+                Previous
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <!-- PAGE NUMBER -->
+
+        <li class="page-item active">
+
+            <span class="page-link">
+
+                {{ page_obj.number }}
+
+            </span>
+
+        </li>
+
+        <!-- NEXT -->
+
+        {% if page_obj.has_next %}
+
+        <li class="page-item">
+
+            <a class="page-link"
+               href="?page={{ page_obj.next_page_number }}">
+
+                Next
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+{% endblock %}

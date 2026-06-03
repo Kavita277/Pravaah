@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %} PRAVAAH - Access Control Matrix {% endblock %}
+
+{% block content %}
+<div class="container my-2">
+    <div class="mb-4">
+        <h2>Global Operational Access Control Matrix</h2>
+        <p class="text-muted small">Cross-reference grid showing active verification rules mapped across roles.</p>
+    </div>
+
+    <form method="POST" action="{% url 'usermgmt:permission_matrix' %}">
+        {% csrf_token %}
+        
+        <div class="table-responsive bg-white border rounded p-3 shadow-sm mb-4">
+            <table class="table table-bordered align-middle text-center mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-start align-middle" style="width: 40%">Capability Permission Scope Token</th>
+                        {% for role in roles %}
+                        <th class="align-middle">{{ role.name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for perm in permissions %}
+                    <tr>
+                        <td class="text-start">
+                            <code class="text-danger">{{ perm.content_type.app_label }}.{{ perm.codename }}</code>
+                        </td>
+                        {% for role in roles %}
+                        <td>
+                            <input class="form-check-input shadow-none" 
+                                   type="checkbox" 
+                                   name="matrix_relations" 
+                                   value="{{ role.id }}_{{ perm.id }}"
+                                   {% if perm in role.permissions.all %}checked{% endif %}>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-chevron-left me-1"></i> Dashboard
+            </a>
+            <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                <i class="fa-solid fa-floppy-disk me-2"></i>Save Matrix Configurations
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

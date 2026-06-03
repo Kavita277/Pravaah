@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %} PRAVAAH - RBAC Dashboard {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">RBAC Administration Dashboard</h2>
+            <p class="text-muted mb-0">Welcome to the central Role-Based Access Control configuration panel. Use the modules below to manage access permissions across the suite.</p>
+        </div>
+        <span class="badge bg-primary px-3 py-2 fs-6 shadow-sm">Security Module</span>
+    </div>
+
+    <div class="card bg-light border shadow-sm">
+    <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+            <h6 class="text-uppercase text-secondary small fw-bold mb-1">Total System Users</h6>
+            <h3 class="fw-bold mb-1 text-dark">{{ total_users }}</h3>
+            <!-- New navigation action element added here -->
+            <a href="{% url 'usermgmt:users_list' %}" class="btn btn-sm btn-link text-primary p-0 text-decoration-none fw-bold small">
+                View User Registry <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="bg-primary text-white rounded p-3">
+            <i class="fa-solid fa-users fa-2xl"></i>
+        </div>
+    </div>
+</div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-top border-primary border-4">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fa-solid fa-user-shield me-2 text-primary"></i> Roles Management
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">Configure application groups such as Administrator, Trainer, and Participant profiles.</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="{% url 'usermgmt:roles_list' %}" class="btn btn-sm btn-outline-primary w-100 fw-bold">View Roles</a>
+                        <a href="{% url 'usermgmt:assign_role' %}" class="btn btn-sm btn-primary w-100 fw-bold">Assign to User</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-top border-success border-4">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fa-solid fa-key me-2 text-success"></i> Permission System
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">Review individual operation capability keys and backend action flags assigned across platform components.</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="{% url 'usermgmt:permissions_list' %}" class="btn btn-sm btn-outline-success w-100 fw-bold">View Permissions List</a>
+                        <a href="{% url 'usermgmt:assign_permissions' %}" class="btn btn-sm btn-success w-100 fw-bold">Assign to Role</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-top border-warning border-4">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fa-solid fa-table-cells me-2 text-warning"></i> Access Control Matrix
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">Map granular operational security policy capabilities directly across functional roles using an interactive checkbox grid layout.</p>
+                    <div class="mt-3">
+                        <a href="{% url 'usermgmt:permission_matrix' %}" class="btn btn-sm btn-outline-warning text-dark w-100 fw-bold">Open Matrix Mapping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %} Session Expired {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center py-5">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card shadow border-0 rounded-3 bg-white">
+      <div class="card-body p-4 p-md-5 text-center">
+        
+        <div class="mb-4">
+          <div class="display-4 text-warning mb-3">
+            <i class="fa-solid fa-hourglass-end animate-pulse"></i>
+          </div>
+          <h2 class="fw-bold text-dark h3">Session Expired</h2>
+          <p class="text-muted small mx-auto" style="max-width: 420px;">
+            Your active login session has timed out due to inactivity or automatic token lifecycle expiration to maintain data integrity.
+          </p>
+        </div>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-warning border-0 shadow-sm small py-2.5 mb-4 d-flex align-items-center justify-content-center gap-2" role="alert">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <div class="mb-4">
+          <a href="{% url 'usermgmt:login' %}" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase tracking-wide shadow-sm">
+            <i class="fa-solid fa-right-to-bracket me-1 text-info"></i> Re-Authenticate Account
+          </a>
+        </div>
+
+        <div class="d-flex align-items-center mb-4">
+          <hr class="flex-grow-1 text-muted opacity-25 m-0">
+          <span class="mx-3 text-uppercase text-muted font-monospace x-small tracking-wider">Alternative Recovery Channels</span>
+          <hr class="flex-grow-1 text-muted opacity-25 m-0">
+        </div>
+
+        <div class="row g-2">
+          <div class="col-sm-4 col-12">
+            <a href="{% url 'usermgmt:forgot_password' %}" class="btn btn-outline-secondary w-100 py-2 small fw-semibold text-muted">
+              <i class="fa-solid fa-circle-question me-1 small text-secondary"></i> Reset Form
+            </a>
+          </div>
+          <div class="col-sm-4 col-12">
+            <a href="{% url 'usermgmt:verify_email' %}" class="btn btn-outline-secondary w-100 py-2 small fw-semibold text-muted">
+              <i class="fa-solid fa-envelope-circle-check me-1 small text-secondary"></i> Verify Link
+            </a>
+          </div>
+          <div class="col-sm-4 col-12">
+            <a href="{% url 'usermgmt:login' %}" class="btn btn-outline-secondary w-100 py-2 small fw-semibold text-muted">
+              <i class="fa-solid fa-house me-1 small text-secondary"></i> Landing Gate
+            </a>
+          </div>
+        </div>
+
+      </div> </div>
+  </div>
+</div>
+
+<style>
+  /* Optional soft animation for the security session timeout icon indicators */
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.85; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-pulse {
+    animation: pulse 2.5s infinite ease-in-out;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    User Profile
+
+</h2>
+
+<div class="card shadow p-4">
+
+    <div class="row">
+
+        <div class="col-md-3 text-center">
+
+            <img
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                class="img-fluid rounded-circle"
+                width="150">
+
+        </div>
+
+        <div class="col-md-9">
+
+            <h3>
+
+                {{ user_data.username }}
+
+            </h3>
+
+            <hr>
+
+            <p>
+
+                <strong>First Name:</strong>
+
+                {{ user_data.first_name }}
+
+            </p>
+
+            <p>
+
+                <strong>Last Name:</strong>
+
+                {{ user_data.last_name }}
+
+            </p>
+
+            <p>
+
+                <strong>Email:</strong>
+
+                {{ user_data.email }}
+
+            </p>
+
+            <p>
+
+                <strong>Mobile:</strong>
+
+                {{ user_data.mobile }}
+
+            </p>
+
+            <p>
+
+                <strong>Role:</strong>
+
+                {{ user_data.role.role_name }}
+
+            </p>
+
+            <p>
+
+                <strong>Status:</strong>
+
+                {{ user_data.status }}
+
+            </p>
+
+            <a href="/profile/edit/"
+               class="btn btn-primary">
+
+                Edit Profile
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

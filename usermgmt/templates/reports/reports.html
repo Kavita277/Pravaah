@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --ink:       #0d0f14;
+    --surface:   #f5f4f0;
+    --panel:     #ffffff;
+    --border:    #e2e0da;
+    --accent:    #2563eb;
+    --accent-lt: #eff4ff;
+    --muted:     #6b7280;
+    --danger:    #dc2626;
+    --success:   #16a34a;
+    --warn:      #d97706;
+    --mono:      'DM Mono', monospace;
+    --sans:      'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── PAGE HEADER ── */
+  .rp-header {
+    padding: 2.5rem 2rem 0;
+    display: flex; flex-direction: row; align-items: center; gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem; margin-bottom: 2rem;
+  }
+  .rp-header-icon {
+    width: 44px; height: 44px; min-width: 44px; background: var(--accent);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .rp-header-icon svg { color: #fff; display: block; }
+  .rp-header-text { display: flex; flex-direction: column; }
+  .rp-header-text h2 {
+    font-size: 1.65rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.2;
+  }
+  .rp-header-text p { font-size: .875rem; color: var(--muted); margin-top: .25rem; }
+
+  /* ── FILTER CARD ── */
+  .filter-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 0 2rem 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .filter-card-head {
+    background: var(--ink);
+    color: #fff;
+    padding: .85rem 1.25rem;
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .filter-card-head span {
+    background: var(--accent);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .filter-card-body { padding: 1.5rem; }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .form-group { display: flex; flex-direction: column; gap: .35rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  .form-control, .form-select {
+    font-family: var(--sans);
+    font-size: .9rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .6rem .85rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    background: #fff;
+  }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    right: .85rem; top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* ── DIVIDER ── */
+  .form-divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 1.25rem 0;
+  }
+
+  /* ── ACTIONS ── */
+  .form-actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    padding-top: .25rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-family: var(--sans);
+    font-size: .875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: .6rem 1.1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s, transform .1s, box-shadow .15s;
+  }
+  .btn:active { transform: translateY(1px); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(37,99,235,.35);
+  }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface); color: var(--ink); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    margin: 0 2rem;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .empty-state svg { opacity: .35; }
+  .empty-state p { font-size: .9rem; }
+  .empty-state strong { color: var(--ink); font-weight: 500; font-size: 1rem; }
+</style>
+
+<div class="container-fluid" style="padding: 0; max-width: 1400px; margin: auto;">
+
+  <!-- PAGE HEADER -->
+  <div class="rp-header">
+    <div class="rp-header-icon">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M9 17v-2m3 2v-4m3 4v-6M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <div class="rp-header-text">
+      <h2>User Reports</h2>
+      <p>Filter and generate user reports based on role, activity, and date range</p>
+    </div>
+  </div>
+
+  <!-- FILTER CARD -->
+  <div class="filter-card">
+
+    <div class="filter-card-head">
+      <span></span> Report Filters
+    </div>
+
+    <div class="filter-card-body">
+      <form method="GET" action="{% url 'usermgmt:report_result' %}">
+
+        <div class="form-grid">
+
+          <!-- Role -->
+          <div class="form-group">
+            <label for="role">Role</label>
+            <div class="select-wrap">
+              <select name="role" id="role" class="form-select">
+                <option value="">All Roles</option>
+                <option value="Super Admin">Super Admin</option>
+                <option value="System Admin">System Admin</option>
+                <option value="Manager">Manager</option>
+                <option value="QA">QA</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label for="status">Status</label>
+            <div class="select-wrap">
+              <select name="status" id="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Created Start -->
+          <div class="form-group">
+            <label for="start_date">Created From</label>
+            <input type="date" name="start_date" id="start_date" class="form-control">
+          </div>
+
+          <!-- Created End -->
+          <div class="form-group">
+            <label for="end_date">Created To</label>
+            <input type="date" name="end_date" id="end_date" class="form-control">
+          </div>
+
+          <!-- Last Login From -->
+          <div class="form-group">
+            <label for="login_start">Last Login From</label>
+            <input type="date" name="login_start" id="login_start" class="form-control">
+          </div>
+
+          <!-- Last Login To -->
+          <div class="form-group">
+            <label for="login_end">Last Login To</label>
+            <input type="date" name="login_end" id="login_end" class="form-control">
+          </div>
+
+          <!-- Joined Within (quick new-user filter) -->
+          <div class="form-group">
+            <label for="joined_within">Joined Within</label>
+            <div class="select-wrap">
+              <select name="joined_within" id="joined_within" class="form-select">
+                <option value="">Any time</option>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="180">Last 6 months</option>
+                <option value="365">Last 1 year</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <hr class="form-divider">
+
+        <!-- Search (full width) -->
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="search">Search User</label>
+            <input type="text" name="search" id="search" class="form-control"
+                   placeholder="Search by username, full name, or email…">
+          </div>
+        </div>
+
+        <input type="hidden" name="report_type" value="users">
+
+        <div class="form-actions" style="margin-top: 1.25rem;">
+          <button type="submit" class="btn btn-primary">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            Generate Report
+          </button>
+          <a href="{% url 'usermgmt:reports' %}" class="btn btn-ghost">
+            Reset Filters
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state">
+    <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <path d="M9 17v-2m3 2v-4m3 4v-6M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+    <strong>No data yet</strong>
+    <p>Apply filters above and click <em>Generate Report</em> to see results.</p>
+  </div>
+
+</div>
+
+{% endblock %}
