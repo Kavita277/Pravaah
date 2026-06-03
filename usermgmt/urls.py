@@ -44,5 +44,6 @@ urlpatterns = [
     
     # --- Unified User Administration Lists (Person 2 & 3) ---
     path('users-list/', views.users_list, name='users_list'),          # Person 2 view endpoint
-    path('rbac/users/', views.users_list_view, name='rbac_users_list'), # Person 3 admin-level list endpoint
+    path('rbac/users/', views.users_list_view, name='rbac_users_list'),
+    path('test/', views.test_page, name='test'),# Person 3 admin-level list endpoint
 ]

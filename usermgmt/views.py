@@ -730,3 +730,7 @@ def users_list_view(request):
         'selected_role': int(selected_role_id) if selected_role_id and selected_role_id.isdigit() else None
     }
     return render(request, 'rbac/users_list.html', context)
+from django.shortcuts import render
+
+def test_page(request):
+    return render(request, 'test.html')

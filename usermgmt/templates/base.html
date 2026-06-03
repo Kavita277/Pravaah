@@ -1,254 +1,669 @@
-<!DOCTYPE html>
-<!-- saved from url=(0043)file:///C:/Users/Kavita/Downloads/base.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head><body class="bg-light d-flex flex-column min-vh-100">{% load static %}
-    {% load auth_extras %}
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} PRAVAAH {% endblock %}</title>
-    <link href="./{} PRAVAAH {}_files/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./{} PRAVAAH {}_files/all.min.css">
-    <link rel="stylesheet" href="file:///C:/Users/Kavita/Downloads/%7B%%20static%20&#39;css/style.css&#39;%20%%7D">
-  
+{% load static %}
+{% load auth_extras %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}PRAVAAH ERP{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
-  
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3 shadow-sm">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-uppercase tracking-wider" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:admin_dashboard&#39;%20%%7D">
-          <i class="fa-solid fa-graduation-cap text-info me-1"></i>
-          PRAVAAH ERP
-        </a>
+  <style>
+    :root {
+      --black:   #0a0a0a;
+      --white:   #f5f5f0;
+      --orange:  #ff5c1a;
+      --orange2: #ff7a3d;
+      --navy:    #0f1e45;
+      --grid:    rgba(0,0,0,0.06);
+      --sidebar-w: 240px;
+      --top-h:     64px;
+    }
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2">
-            <li class="nav-item">
-              <a class="nav-link active" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:user_home&#39;%20%%7D"> Dashboard </a>
-            </li>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      min-height: 100vh;
+      /* Grid lines like the reference */
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
 
-            {% if user.is_superuser or not user|has_group:"Trainer" %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                User Management
-              </a>
-              <ul class="dropdown-menu shadow border-0 mt-2">
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:register&#39;%20%%7D">
-                    <i class="fa-solid fa-user-plus me-2 text-muted"></i>Register New User
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:users_list&#39;%20%%7D">
-                    <i class="fa-solid fa-users me-2 text-muted"></i>User Workspace / View List
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:roles_list&#39;%20%%7D">
-                    <i class="fa-solid fa-shield-halved me-2 text-muted"></i>Roles &amp; Permissions Board
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:permission_matrix&#39;%20%%7D">
-                    <i class="fa-solid fa-table-cells me-2 text-muted"></i>Global Authorization Matrix
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:audit_logs&#39;%20%%7D">
-                    <i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Central Audit Logging Files
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:activity_dashboard&#39;%20%%7D">
-                    <i class="fa-solid fa-chart-line me-2 text-muted"></i>Analytical Tracking Dashboards
-                  </a>
-                </li>
-              </ul>
-            </li>
+    /* ─── TOPBAR ─── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--top-h);
+      background: var(--white);
+      border-bottom: 2px solid var(--black);
+      display: flex; align-items: stretch;
+      z-index: 300;
+    }
 
-            <li class="nav-item">
-              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Participants </a>
-            </li>
-            {% endif %}
+    /* Brand — bold black block left */
+    .topbar-brand {
+      width: var(--sidebar-w);
+      background: var(--black);
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 1.4rem;
+      text-decoration: none;
+      flex-shrink: 0;
+      border-right: 2px solid var(--orange);
+    }
+    .brand-logo {
+      width: 36px; height: 36px;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #fff; font-weight: 900;
+    }
+    .brand-wordmark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 3px;
+      color: #fff; line-height: 1;
+    }
+    .brand-wordmark span { color: var(--orange); }
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Trainers
-              </a>
-              <ul class="dropdown-menu shadow border-0 mt-2">
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-file-invoice me-2 text-muted"></i>Trainer Dashboard
-                  </a>
-                </li>
-              </ul>
-            </li>
+    /* Nav links — brutalist pill tabs */
+    .topbar-nav {
+      display: flex; align-items: stretch;
+      list-style: none; padding: 0; margin: 0;
+      flex: 1;
+    }
+    .topbar-nav > li {
+      display: flex; align-items: stretch;
+      position: relative;
+    }
+    .topbar-nav > li > a,
+    .topbar-nav > li > button {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 20px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--black);
+      text-decoration: none;
+      border: none; background: none;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      transition: all 0.15s;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+    .topbar-nav > li > a:hover,
+    .topbar-nav > li > button:hover {
+      background: var(--orange);
+      color: #fff;
+    }
+    /* Arrow box accent like the reference */
+    .topbar-nav > li > a .nav-arrow,
+    .topbar-nav > li > button .nav-arrow {
+      width: 22px; height: 22px;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .topbar-nav > li > a:hover .nav-arrow,
+    .topbar-nav > li > button:hover .nav-arrow {
+      background: #fff;
+      color: var(--orange);
+    }
 
-            {% if user.is_superuser or not user|has_group:"Trainer" %}
-            <li class="nav-item">
-              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Courses </a>
-            </li>
+    /* Dropdown */
+    .nav-drop {
+      position: absolute; top: 100%; left: 0;
+      min-width: 200px;
+      background: var(--black);
+      border: 2px solid var(--orange);
+      border-top: none;
+      z-index: 999;
+      display: none;
+    }
+    .topbar-nav > li:hover .nav-drop { display: block; }
+    .nav-drop a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.15s;
+    }
+    .nav-drop a:last-child { border-bottom: none; }
+    .nav-drop a:hover { background: var(--orange); color: #fff; padding-left: 20px; }
+    .nav-drop a i { width: 16px; text-align: center; }
 
-            <li class="nav-item">
-              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/base.html#"> Hostel </a>
-            </li>
+    /* Topbar right */
+    .topbar-right {
+      display: flex; align-items: stretch;
+      margin-left: auto;
+      border-left: 1px solid rgba(0,0,0,0.1);
+    }
+    .topbar-right > a,
+    .topbar-right > button {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 18px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--black); text-decoration: none;
+      border: none; background: none;
+      border-left: 1px solid rgba(0,0,0,0.1);
+      transition: all 0.15s; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .topbar-right > a:hover { background: var(--orange); color: #fff; }
+    .user-initials {
+      width: 28px; height: 28px;
+      background: var(--orange);
+      color: #fff; font-size: 0.78rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-logout-top {
+      background: var(--orange) !important;
+      color: #fff !important;
+    }
+    .btn-logout-top:hover { background: #d94400 !important; }
 
-            <li class="nav-item">
-              <a class="nav-link" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:reports&#39;%20%%7D"> Reports </a>
-            </li>
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      position: fixed;
+      top: var(--top-h); left: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - var(--top-h));
+      background: var(--black);
+      overflow-y: auto; overflow-x: hidden;
+      z-index: 200;
+      border-right: 2px solid rgba(255,255,255,0.08);
+    }
+    .sidebar::-webkit-scrollbar { width: 3px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--orange); }
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="file:///C:/Users/Kavita/Downloads/base.html#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Proposals &amp; Marketing
-              </a>
-              <ul class="dropdown-menu shadow border-0 mt-2">
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-chart-line me-2 text-muted"></i>Proposals Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-plus me-2 text-muted"></i>Create Proposal
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-list-check me-2 text-muted"></i>Gate 0 Feasibility
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-clipboard-check me-2 text-muted"></i>Gate Approvals
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="file:///C:/Users/Kavita/Downloads/base.html#">
-                    <i class="fa-solid fa-bullseye me-2 text-muted"></i>Marketing Queue
-                  </a>
-                </li>
-              </ul>
-            </li>
-            {% endif %}
-          </ul>
+    .sb-section { padding: 1.2rem 0 0; }
+    .sb-label {
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0 1.2rem; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sb-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
 
-          <form class="d-flex gap-2" role="search">
-            <input class="form-control" type="search" placeholder="Search Module" aria-label="Search">
-            <button class="btn btn-outline-light" type="submit">Search</button>
-          </form>
+    .sb-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 1.2rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
+      cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .sb-item i { width: 16px; text-align: center; font-size: 0.82rem; flex-shrink: 0; }
+    .sb-item:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      padding-left: 1.5rem;
+    }
+    .sb-item.active {
+      color: var(--orange);
+      background: rgba(255,92,26,0.1);
+      border-left: 3px solid var(--orange);
+    }
+    .sb-item.active i { color: var(--orange); }
+    .sb-arrow {
+      margin-left: auto; font-size: 0.6rem;
+      color: rgba(255,255,255,0.2);
+      transition: transform 0.2s;
+    }
+    .sb-item.is-open .sb-arrow { transform: rotate(180deg); color: var(--orange); }
 
-          {% if user.is_authenticated %}
-            <ul class="navbar-nav ms-2 align-items-center gap-2">
-              <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center gap-1" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:profile&#39;%20%%7D">
-                  <i class="fa-solid fa-user-circle fs-5 text-info"></i>
-                  <span>Profile ({{ user.username }})</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="btn btn-sm btn-danger px-3 text-white d-flex align-items-center gap-1" href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:logout&#39;%20%%7D">
-                  <i class="fa-solid fa-power-off"></i> Logout
-                </a>
-              </li>
-            </ul>
-          {% endif %}
-        </div>
+    .sb-sub { overflow: hidden; max-height: 0; transition: max-height 0.25s ease; }
+    .sb-sub.open { max-height: 400px; }
+    .sb-sub .sb-item {
+      padding-left: 2.4rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+      text-transform: none;
+      font-weight: 500;
+    }
+    .sb-sub .sb-item:hover { color: #fff; padding-left: 2.7rem; }
+
+    .sb-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 8px 0; }
+
+    /* ─── PAGE WRAPPER ─── */
+    .page-wrap {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--top-h);
+      min-height: calc(100vh - var(--top-h));
+      display: flex; flex-direction: column;
+    }
+    .page-body {
+      flex: 1; padding: 2rem 2.4rem;
+      animation: fadeUp 0.25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(8px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Page header — brutalist big title */
+    .pg-header {
+      margin-bottom: 2rem;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 1rem;
+    }
+    .pg-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem; line-height: 1;
+      letter-spacing: 2px; color: var(--black);
+    }
+    .pg-title .accent { color: var(--orange); }
+    .pg-sub {
+      font-size: 0.82rem; font-weight: 500;
+      color: #666; margin-top: 4px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    /* ─── MESSAGES ─── */
+    .msg-zone { padding: 1rem 2.4rem 0; }
+    .msg-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px;
+      border: 2px solid;
+      font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .msg-item.success { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
+    .msg-item.error   { border-color: var(--orange); background: #fff5f0; color: #c0400a; }
+    .msg-item.info    { border-color: var(--navy); background: #f0f4ff; color: var(--navy); }
+    .msg-close { background: none; border: none; cursor: pointer; font-size: 1.1rem; opacity: 0.5; }
+
+    /* ─── REUSABLE COMPONENTS ─── */
+
+    /* Stat cards — brutalist style */
+    .stat-card {
+      background: #fff;
+      border: 2px solid var(--black);
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute; bottom: -4px; right: -4px;
+      width: 100%; height: 100%;
+      background: var(--orange);
+      z-index: -1;
+      transition: all 0.15s;
+    }
+    .stat-card:hover { transform: translate(-2px,-2px); }
+    .stat-card .sc-icon {
+      font-size: 1.4rem; color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .stat-card .sc-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem; line-height: 1;
+      color: var(--black); letter-spacing: 1px;
+    }
+    .stat-card .sc-label {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: #888; margin-top: 6px;
+    }
+
+    /* Orange stat variant */
+    .stat-card.s-orange {
+      background: var(--orange); border-color: var(--orange);
+    }
+    .stat-card.s-orange::after { background: var(--black); }
+    .stat-card.s-orange .sc-num,
+    .stat-card.s-orange .sc-label,
+    .stat-card.s-orange .sc-icon { color: #fff; }
+
+    /* Black stat variant */
+    .stat-card.s-black {
+      background: var(--black); border-color: var(--black);
+    }
+    .stat-card.s-black::after { background: var(--orange); }
+    .stat-card.s-black .sc-num { color: #fff; }
+    .stat-card.s-black .sc-label { color: rgba(255,255,255,0.5); }
+    .stat-card.s-black .sc-icon { color: var(--orange); }
+
+    /* Module cards */
+    .mod-card {
+      background: #fff;
+      border: 2px solid var(--black);
+      padding: 1.5rem;
+      height: 100%;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .mod-card::after {
+      content: '';
+      position: absolute; bottom: -4px; right: -4px;
+      width: 100%; height: 100%;
+      background: var(--black);
+      z-index: -1; transition: all 0.15s;
+    }
+    .mod-card:hover { transform: translate(-2px,-2px); }
+    .mod-card:hover::after { background: var(--orange); }
+    .mod-icon {
+      font-size: 1.6rem; color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .mod-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem; letter-spacing: 1.5px;
+      color: var(--black); margin-bottom: 8px;
+    }
+    .mod-desc { font-size: 0.82rem; color: #666; flex: 1; line-height: 1.65; }
+    .mod-link {
+      margin-top: 1.2rem; display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--orange); text-decoration: none;
+      transition: gap 0.2s;
+    }
+    .mod-link:hover { gap: 12px; color: var(--orange); }
+    .mod-link .arrow-box {
+      width: 22px; height: 22px;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.7rem;
+    }
+
+    /* Buttons */
+    .btn-p {
+      background: var(--orange); color: #fff;
+      border: 2px solid var(--orange);
+      padding: 10px 24px; font-size: 0.78rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s; font-family: 'Inter', sans-serif;
+      position: relative;
+    }
+    .btn-p:hover { background: #d94400; border-color: #d94400; color: #fff; }
+
+    .btn-p-outline {
+      background: transparent; color: var(--black);
+      border: 2px solid var(--black);
+      padding: 10px 24px; font-size: 0.78rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .btn-p-outline:hover { background: var(--black); color: #fff; }
+
+    /* Tables */
+    .p-table-wrap { border: 2px solid var(--black); overflow: hidden; }
+    .p-table { width: 100%; border-collapse: collapse; background: #fff; }
+    .p-table thead tr { background: var(--black); }
+    .p-table thead th {
+      color: rgba(255,255,255,0.8); font-size: 0.68rem;
+      font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+      padding: 13px 18px; border: none; text-align: left;
+    }
+    .p-table tbody tr { border-bottom: 1px solid rgba(0,0,0,0.08); transition: background 0.15s; }
+    .p-table tbody tr:hover { background: #fff5f0; }
+    .p-table tbody td { padding: 12px 18px; font-size: 0.86rem; }
+
+    /* Badges */
+    .bdg { display: inline-flex; align-items: center; padding: 3px 10px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1.5px solid; }
+    .bdg-green  { border-color: #22c55e; color: #15803d; background: #f0fdf4; }
+    .bdg-red    { border-color: var(--orange); color: var(--orange); background: #fff5f0; }
+    .bdg-navy   { border-color: var(--navy); color: var(--navy); background: #f0f4ff; }
+    .bdg-black  { border-color: var(--black); color: var(--black); background: transparent; }
+
+    /* Cards */
+    .p-card {
+      background: #fff;
+      border: 2px solid var(--black);
+      position: relative;
+    }
+    .p-card::after {
+      content: '';
+      position: absolute; bottom: -4px; right: -4px;
+      width: 100%; height: 100%;
+      background: var(--orange); z-index: -1;
+    }
+    .p-card-head {
+      background: var(--black);
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; letter-spacing: 2px; color: #fff;
+    }
+    .p-card-head i { color: var(--orange); }
+    .p-card-body { padding: 20px; }
+
+    /* Form inputs */
+    .p-input {
+      width: 100%; padding: 11px 14px;
+      border: 2px solid var(--black);
+      font-size: 0.88rem; font-family: 'Inter', sans-serif;
+      background: #fff; outline: none;
+      transition: border-color 0.15s;
+    }
+    .p-input:focus { border-color: var(--orange); }
+    .p-input::placeholder { color: #aaa; }
+    .p-label {
+      font-size: 0.72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--black); margin-bottom: 6px; display: block;
+    }
+
+    /* ─── FOOTER ─── */
+    .p-footer {
+      background: var(--black);
+      border-top: 3px solid var(--orange);
+      padding: 1.2rem 2.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .p-footer .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; letter-spacing: 2px; color: #fff;
+    }
+    .p-footer .footer-brand span { color: var(--orange); }
+    .p-footer .footer-links a {
+      color: rgba(255,255,255,0.4); text-decoration: none;
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-left: 1.2rem; transition: color 0.15s;
+    }
+    .p-footer .footer-links a:hover { color: var(--orange); }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+      .sidebar.show { transform: translateX(0); }
+      .page-wrap { margin-left: 0; }
+      .topbar-nav { display: none; }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- ═══════════ TOPBAR ═══════════ -->
+<header class="topbar">
+  <a href="{% url 'usermgmt:user_home' %}" class="topbar-brand">
+    <div class="brand-logo"><i class="fa-solid fa-layer-group"></i></div>
+    <div class="brand-wordmark">PRAVA<span>AH</span></div>
+  </a>
+
+  <ul class="topbar-nav">
+    <li>
+      <a href="{% url 'usermgmt:user_home' %}">
+        Dashboard <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span>
+      </a>
+    </li>
+    {% if user.is_authenticated %}
+    <li>
+      <button>
+        User Mgmt <span class="nav-arrow"><i class="fa-solid fa-chevron-down" style="font-size:0.6rem;"></i></span>
+      </button>
+      <div class="nav-drop">
+        <a href="{% url 'usermgmt:register' %}"><i class="fa-solid fa-user-plus"></i> Register User</a>
+        <a href="{% url 'usermgmt:users_list' %}"><i class="fa-solid fa-users"></i> User List</a>
+        <a href="{% url 'usermgmt:admin_dashboard' %}"><i class="fa-solid fa-shield-halved"></i> RBAC Dashboard</a>
+        <a href="{% url 'usermgmt:permission_matrix' %}"><i class="fa-solid fa-table-cells"></i> Permission Matrix</a>
       </div>
-    </nav>
+    </li>
+    <li><a href="#">Students <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
+    <li><a href="#">Trainers <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
+    <li><a href="#">Courses <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
+    <li><a href="#">Hostel <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
+    <li><a href="{% url 'usermgmt:reports' %}">Reports <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
+    {% endif %}
+  </ul>
 
-    <div class="container mt-3">
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+  <div class="topbar-right">
+    {% if user.is_authenticated %}
+      <a href="{% url 'usermgmt:profile' %}">
+        <div class="user-initials">{{ user.username|slice:":1"|upper }}</div>
+        {{ user.username }}
+      </a>
+      <a href="{% url 'usermgmt:logout' %}" class="btn-logout-top">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    {% else %}
+      <a href="{% url 'usermgmt:login' %}" class="btn-logout-top">Sign In</a>
+    {% endif %}
+  </div>
+</header>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <div class="sb-section">
+    <div class="sb-label">Overview</div>
+    <a href="{% url 'usermgmt:user_home' %}" class="sb-item {% block nav_home %}{% endblock %}">
+      <i class="fa-solid fa-house"></i> Dashboard
+    </a>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="sb-section">
+    <div class="sb-label">User Management</div>
+    <button class="sb-item" onclick="toggleSub('s1',this)">
+      <i class="fa-solid fa-users-gear"></i> Users & Access
+      <i class="fa-solid fa-chevron-down sb-arrow"></i>
+    </button>
+    <div class="sb-sub" id="s1">
+      <a href="{% url 'usermgmt:register' %}" class="sb-item"><i class="fa-solid fa-user-plus"></i> Register User</a>
+      <a href="{% url 'usermgmt:users_list' %}" class="sb-item"><i class="fa-solid fa-list-ul"></i> All Users</a>
+      <a href="{% url 'usermgmt:profile' %}" class="sb-item"><i class="fa-solid fa-id-card"></i> My Profile</a>
     </div>
-
-    <div class="container mt-4 mb-5 flex-grow-1">
-      <div class="row">
-        <main class="col-12">
-          {% block content %} {% endblock %}
-        </main>
-        {% block sidebar %} {% endblock %}
-      </div>
+    <button class="sb-item" onclick="toggleSub('s2',this)">
+      <i class="fa-solid fa-shield-halved"></i> Roles & Perms
+      <i class="fa-solid fa-chevron-down sb-arrow"></i>
+    </button>
+    <div class="sb-sub" id="s2">
+      <a href="{% url 'usermgmt:admin_dashboard' %}" class="sb-item"><i class="fa-solid fa-gauge"></i> RBAC Dashboard</a>
+      <a href="{% url 'usermgmt:roles_list' %}" class="sb-item"><i class="fa-solid fa-user-tag"></i> Roles Board</a>
+      <a href="{% url 'usermgmt:permission_matrix' %}" class="sb-item"><i class="fa-solid fa-table-cells"></i> Perm Matrix</a>
+      <a href="{% url 'usermgmt:assign_role' %}" class="sb-item"><i class="fa-solid fa-user-check"></i> Assign Role</a>
     </div>
+  </div>
 
-    <footer class="bg-dark text-white pt-5 pb-3 mt-auto border-top border-secondary border-opacity-20">
-      <div class="container">
-        <div class="row g-4 mb-4 text-center text-md-start">
-          <div class="col-lg-5 col-md-6 col-12">
-            <h5 class="text-info fw-bold mb-3">
-              <i class="fa-solid fa-layer-group me-1"></i> PRAVAAH ERP Suite
-            </h5>
-            <p class="small text-white-50 lh-lg">
-              An advanced institutional framework designed for complete tracking solutions.
-              Streamlines student administration, trainer mapping workflows, course material
-              delivery grids, and secure role authorization workflows natively.
-            </p>
-          </div>
+  <hr class="sb-divider">
 
-          <div class="col-lg-3 col-md-6 col-12 ps-md-5">
-            <h6 class="text-uppercase text-white fw-bold tracking-wider mb-3 small">Quick Navigation</h6>
-            <ul class="list-unstyled text-white-50 small d-grid gap-2">
-              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:user_home&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Portal Hub Dashboard</a></li>
-              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:users_list&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> User Workspaces</a></li>
-              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:reports&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Analytical Management Reports</a></li>
-              <li><a href="file:///C:/Users/Kavita/Downloads/%7B%%20url%20&#39;usermgmt:profile&#39;%20%%7D" class="text-reset text-decoration-none footer-link"><i class="fa-solid fa-angle-right me-1 text-info small"></i> Personal Profiles Control</a></li>
-            </ul>
-          </div>
+  <div class="sb-section">
+    <div class="sb-label">Modules</div>
+    <a href="#" class="sb-item"><i class="fa-solid fa-user-graduate"></i> Students</a>
+    <a href="#" class="sb-item"><i class="fa-solid fa-chalkboard-user"></i> Trainers</a>
+    <a href="#" class="sb-item"><i class="fa-solid fa-book-open"></i> Courses</a>
+    <a href="#" class="sb-item"><i class="fa-solid fa-building"></i> Hostel</a>
+    <a href="#" class="sb-item"><i class="fa-solid fa-file-invoice-dollar"></i> Finance</a>
+  </div>
 
-          <div class="col-lg-4 col-md-12 col-12">
-            <h6 class="text-uppercase text-white fw-bold tracking-wider mb-3 small">Contact &amp; Support Hub</h6>
-            <ul class="list-unstyled text-white-50 small d-grid gap-2">
-              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                <i class="fa-solid fa-location-dot text-info"></i>
-                <span>Pravaah</span>
-              </li>
-              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                <i class="fa-solid fa-envelope text-info"></i>
-                <a href="mailto:support@pravaah-erp.edu" class="text-reset text-decoration-none">support@pravaah-erp.edu</a>
-              </li>
-              <li class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                <i class="fa-solid fa-phone text-info"></i>
-                <span>+91 (22) 2419 8257</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+  <hr class="sb-divider">
 
-        <hr class="border-secondary opacity-25 my-4">
-        <div class="row align-items-center justify-content-between g-3 text-center text-md-start text-white-50 small">
-          <div class="col-md-7 font-monospace">
-            © 2026 Copyright System Operations Team. All Rights Reserved.
-          </div>
-          <div class="col-md-5 text-md-end text-center">
-            <div class="d-flex justify-content-center justify-content-md-end gap-3 fs-5">
-              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-facebook"></i></a>
-              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-twitter"></i></a>
-              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-linkedin"></i></a>
-              <a href="file:///C:/Users/Kavita/Downloads/base.html#!" class="text-white-50"><i class="fab fa-github"></i></a>
-            </div>
-          </div>
-        </div>
+  <div class="sb-section">
+    <div class="sb-label">Analytics</div>
+    <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item {% block nav_audit %}{% endblock %}">
+      <i class="fa-solid fa-clipboard-list"></i> Audit Logs
+    </a>
+    <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item {% block nav_activity %}{% endblock %}">
+      <i class="fa-solid fa-chart-line"></i> Activity
+    </a>
+    <a href="{% url 'usermgmt:reports' %}" class="sb-item {% block nav_reports %}{% endblock %}">
+      <i class="fa-solid fa-chart-bar"></i> Reports
+    </a>
+  </div>
+  {% endif %}
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="page-wrap">
+  {% if messages %}
+  <div class="msg-zone">
+    {% for message in messages %}
+      <div class="msg-item {% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+        <span>
+          {% if message.tags == 'error' %}<i class="fa-solid fa-circle-xmark me-2"></i>
+          {% elif message.tags == 'success' %}<i class="fa-solid fa-circle-check me-2"></i>
+          {% else %}<i class="fa-solid fa-circle-info me-2"></i>{% endif %}
+          {{ message }}
+        </span>
+        <button class="msg-close" onclick="this.parentElement.remove()">✕</button>
       </div>
-    </footer>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <style>
-      .footer-link:hover {
-        color: #0dcaf0 !important;
-        padding-left: 4px;
-        transition: all 0.2s ease-in-out;
-      }
-    </style>
+  <div class="page-body">
+    {% block content %}{% endblock %}
+  </div>
 
-    <script src="./{} PRAVAAH {}_files/bootstrap.bundle.min.js.download"></script>
-  
+  <footer class="p-footer">
+    <div class="footer-brand">PRAVA<span>AH</span> ERP</div>
+    <div class="footer-links">
+      <a href="{% url 'usermgmt:audit_logs' %}">Audit Logs</a>
+      <a href="{% url 'usermgmt:reports' %}">Reports</a>
+      <a href="{% url 'usermgmt:profile' %}">Profile</a>
+      <span style="color:rgba(255,255,255,0.2); font-size:0.7rem; margin-left:1.2rem;">© 2026 L&T Training Programme</span>
+    </div>
+  </footer>
+</div>
 
-</body></html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleSub(id, btn) {
+    const sub = document.getElementById(id);
+    const open = sub.classList.contains('open');
+    document.querySelectorAll('.sb-sub').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.sb-item.is-open').forEach(b => b.classList.remove('is-open'));
+    if (!open) { sub.classList.add('open'); btn.classList.add('is-open'); }
+  }
+  document.querySelectorAll('.sb-item[href]').forEach(link => {
+    if (link.href === window.location.href) {
+      link.classList.add('active');
+      const sub = link.closest('.sb-sub');
+      if (sub) { sub.classList.add('open'); sub.previousElementSibling?.classList.add('is-open'); }
+    }
+  });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
