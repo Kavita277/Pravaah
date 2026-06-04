@@ -512,34 +512,14 @@
     <div class="brand-wordmark">PRAVA<span>AH</span></div>
   </a>
 
-  <ul class="topbar-nav">
-    <li>
-      <a href="{% url 'usermgmt:user_home' %}">
-        Dashboard <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span>
-      </a>
-    </li>
-    {% if user.is_authenticated %}
-    <li>
-      <button>
-        User Mgmt <span class="nav-arrow"><i class="fa-solid fa-chevron-down" style="font-size:0.6rem;"></i></span>
-      </button>
-      <div class="nav-drop">
-        <a href="{% url 'usermgmt:register' %}"><i class="fa-solid fa-user-plus"></i> Register User</a>
-        <a href="{% url 'usermgmt:users_list' %}"><i class="fa-solid fa-users"></i> User List</a>
-        <a href="{% url 'usermgmt:admin_dashboard' %}"><i class="fa-solid fa-shield-halved"></i> RBAC Dashboard</a>
-        <a href="{% url 'usermgmt:permission_matrix' %}"><i class="fa-solid fa-table-cells"></i> Permission Matrix</a>
-      </div>
-    </li>
-    <li><a href="#">Students <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
-    <li><a href="#">Trainers <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
-    <li><a href="#">Courses <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
-    <li><a href="#">Hostel <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
-    <li><a href="{% url 'usermgmt:reports' %}">Reports <span class="nav-arrow"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.6rem;"></i></span></a></li>
-    {% endif %}
-  </ul>
+  <div style="flex:1;"></div>
 
   <div class="topbar-right">
     {% if user.is_authenticated %}
+    <a href="#">
+    <i class="fa-solid fa-bell"></i>
+    Notifications
+</a>
       <a href="{% url 'usermgmt:profile' %}">
         <div class="user-initials">{{ user.username|slice:":1"|upper }}</div>
         {{ user.username }}
@@ -586,31 +566,7 @@
     </div>
   </div>
 
-  <hr class="sb-divider">
 
-  <div class="sb-section">
-    <div class="sb-label">Modules</div>
-    <a href="#" class="sb-item"><i class="fa-solid fa-user-graduate"></i> Students</a>
-    <a href="#" class="sb-item"><i class="fa-solid fa-chalkboard-user"></i> Trainers</a>
-    <a href="#" class="sb-item"><i class="fa-solid fa-book-open"></i> Courses</a>
-    <a href="#" class="sb-item"><i class="fa-solid fa-building"></i> Hostel</a>
-    <a href="#" class="sb-item"><i class="fa-solid fa-file-invoice-dollar"></i> Finance</a>
-  </div>
-
-  <hr class="sb-divider">
-
-  <div class="sb-section">
-    <div class="sb-label">Analytics</div>
-    <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item {% block nav_audit %}{% endblock %}">
-      <i class="fa-solid fa-clipboard-list"></i> Audit Logs
-    </a>
-    <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item {% block nav_activity %}{% endblock %}">
-      <i class="fa-solid fa-chart-line"></i> Activity
-    </a>
-    <a href="{% url 'usermgmt:reports' %}" class="sb-item {% block nav_reports %}{% endblock %}">
-      <i class="fa-solid fa-chart-bar"></i> Reports
-    </a>
-  </div>
   {% endif %}
 </aside>
 
@@ -630,6 +586,44 @@
       </div>
     {% endfor %}
   </div>
+
+  ```html
+<hr class="sb-divider">
+
+<div class="sb-section">
+
+    <div class="sb-label">
+        Monitoring
+    </div>
+
+    <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item">
+        <i class="fa-solid fa-clipboard-list"></i>
+        Audit Logs
+    </a>
+
+    <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
+        <i class="fa-solid fa-chart-line"></i>
+        Activity Dashboard
+    </a>
+
+</div>
+
+<hr class="sb-divider">
+
+<div class="sb-section">
+
+    <div class="sb-label">
+        Reports
+    </div>
+
+    <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+        <i class="fa-solid fa-file-invoice"></i>
+        Reports
+    </a>
+
+</div>
+```
+
   {% endif %}
 
   <div class="page-body">

@@ -5,178 +5,323 @@
 {% block content %}
 {% load auth_extras %}
 <div class="container py-4">
-    <!-- Welcome Header -->
-    <div class="p-5 mb-4 rounded-4 shadow-sm text-white" style="background: linear-gradient(135deg, #3a1616 0%, #682323 100%);">
-        <div class="container-fluid py-2">
-            <h1 class="display-5 fw-bold">
-                <i class="fa-solid fa-gauge-high me-2"></i>
-                {% if user.is_authenticated %}
-                    Welcome Back, {{ user.first_name|default:user.username }}!
-                {% else %}
-                    Welcome to PRAVAAH ERP
-                {% endif %}
-            </h1>
-            <p class="col-md-9 fs-5 opacity-75">
-                Your unified institutional tracking and administration suite.
-            </p>
-            {% if not user.is_authenticated %}
-                <a href="{% url 'usermgmt:login' %}" class="btn btn-outline-light btn-lg px-4 mt-2 fw-bold">
-                    <i class="fa-solid fa-right-to-bracket me-2"></i> Sign In to Portal
-                </a>
-            {% else %}
-                <a href="{% url 'usermgmt:profile' %}" class="btn btn-light text-dark btn-lg px-4 mt-2 fw-bold shadow-sm">
-                    <i class="fa-solid fa-user-gear me-2"></i> Manage Profile
-                </a>
-            {% endif %}
+    <!-- Page Header -->
+
+<div class="mb-5">
+
+    <h1 class="fw-bold text-uppercase mb-2"
+        style="font-size:2.4rem;letter-spacing:2px;color:#0a0a0a;">
+
+        USER <span style="color:#ff5c1a;">MANAGEMENT</span>
+
+    </h1>
+
+    <p class="text-muted mb-0">
+        Manage users, authentication, roles, permissions and system access.
+    </p>
+
+</div>
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="fa-solid fa-users fa-2x mb-3"
+   style="color:#ff5c1a;"></i>
+
+                <h2 class="fw-bold mb-1">
+                    120
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Total Users
+                </p>
+
+            </div>
+
         </div>
+
     </div>
 
-    <!-- Active Management Modules -->
-    <h3 class="fw-bold mb-4 text-dark mt-5">
-        <i class="fa-solid fa-cubes me-2 text-danger"></i>
-        Active ERP Modules
-    </h3>
+    <div class="col-md-3">
 
-    <div class="row g-4 mb-5">
-        {% if user.is_superuser or not user|has_group:"Trainer" %}
+        <div class="card border-0 shadow-sm h-100">
 
-        <!-- User Registry Module Card -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #0d6efd;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">User Registry</h5>
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill">Management</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        View fully detailed active accounts, registry workspaces, and execute modifications.
-                    </p>
-                    <a href="{% url 'usermgmt:users_list' %}" class="btn btn-outline-primary w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-users me-1"></i> Open Workspace
-                    </a>
-                </div>
+            <div class="card-body text-center">
+
+                <i class="fa-solid fa-user-check fa-2x mb-3"
+   style="color:#ff5c1a;"></i>
+
+                <h2 class="fw-bold mb-1">
+                    95
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Active Users
+                </p>
+
             </div>
+
         </div>
 
-        <!-- Security & RBAC Module Card -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #198754;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">RBAC Security</h5>
-                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-1 rounded-pill">Security</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Configure authorization matrices, change user roles, and adjust permissions board.
-                    </p>
-                    <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-success w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-shield-halved me-1"></i> Launch Controller
-                    </a>
-                </div>
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="fa-solid fa-user-shield fa-2x mb-3"
+   style="color:#ff5c1a;"></i>
+                <h2 class="fw-bold mb-1">
+                    8
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Roles
+                </p>
+
             </div>
+
         </div>
 
-        <!-- Audit & Logs Module Card -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #dc3545;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">Audit Logs</h5>
-                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-1 rounded-pill">Monitoring</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Access real-time operational database audits, user session trackers, and logging metrics.
-                    </p>
-                    <a href="{% url 'usermgmt:audit_logs' %}" class="btn btn-outline-danger w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-clock-rotate-left me-1"></i> View Audit Files
-                    </a>
-                </div>
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i class="fa-solid fa-clipboard-list fa-2x mb-3"
+   style="color:#0a0a0a;"></i>
+
+                <h2 class="fw-bold mb-1">
+                    1240
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Audit Logs
+                </p>
+
             </div>
+
         </div>
 
-        <!-- Analytics Module Card -->
-        <div class="col-md-6">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #0dcaf0;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">Analytics & Activity</h5>
-                        <span class="badge bg-info bg-opacity-10 text-dark px-3 py-1 rounded-pill">Analytics</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Explore graphical charts showing session activities, status distribution, and overview metrics.
-                    </p>
-                    <a href="{% url 'usermgmt:activity_dashboard' %}" class="btn btn-outline-info text-dark w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-chart-line me-1"></i> Open Dashboard
-                    </a>
-                </div>
-            </div>
+    </div>
+
+</div>
+    
+   <!-- Quick Actions -->
+
+<h3 class="fw-bold mb-4 mt-4"
+    style="letter-spacing:1px;color:#0a0a0a;">
+    <i class="fa-solid fa-bolt me-2"
+       style="color:#ff5c1a;"></i>
+    QUICK ACTIONS
+</h3>
+
+<div class="row g-4">
+
+{% if user.is_superuser or not user|has_group:"Trainer" %}
+
+<div class="col-md-4">
+    <div class="pravaah-card h-100">
+
+        <div class="pravaah-icon">
+            <i class="fa-solid fa-users"></i>
         </div>
 
-        <!-- Reports Module Card -->
-        <div class="col-md-6">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #ffc107;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">System Reports</h5>
-                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-1 rounded-pill">Reporting</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Run reports on active logins, role groups, and filter details for print/export.
-                    </p>
-                    <a href="{% url 'usermgmt:reports' %}" class="btn btn-outline-warning text-dark w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-file-invoice me-1"></i> Generate Reports
-                    </a>
-                </div>
-            </div>
-        </div>
+        <h5 class="fw-bold mt-3">
+            User Registry
+        </h5>
 
-        <!-- Billing Module Card (placeholder) -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #6f42c1;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">Billing Module</h5>
-                        <span class="badge px-3 py-1 rounded-pill" style="color: #6f42c1; background-color: rgba(111,66,193,0.1);">Finance</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Access your billing dashboard, upload bills, and review payment status and history.
-                    </p>
-                    <a href="#" class="btn btn-outline-secondary w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-file-invoice me-1"></i> Coming Soon
-                    </a>
-                </div>
-            </div>
-        </div>
+        <p class="text-muted small mb-4">
+            View and manage registered users.
+        </p>
 
-        <!-- Proposals Module Card (placeholder) -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
-                <div class="card-body p-4 d-flex flex-column" style="border-top: 5px solid #6610f2;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-dark mb-0">Proposals & Marketing</h5>
-                        <span class="badge px-3 py-1 rounded-pill" style="color: #6610f2; background-color: rgba(102,16,242,0.1);">Pipeline</span>
-                    </div>
-                    <p class="text-secondary small flex-grow-1">
-                        Track Future Proposals, submit Gate 0 feasibility checks, and monitor Marketing Gate Approvals.
-                    </p>
-                    <a href="#" class="btn btn-outline-secondary w-100 fw-bold rounded-3 mt-3">
-                        <i class="fa-solid fa-bullseye me-1"></i> Coming Soon
-                    </a>
-                </div>
-            </div>
-        </div>
+        <a href="{% url 'usermgmt:users_list' %}"
+           class="btn pravaah-btn w-100">
+            Open Workspace
+        </a>
 
-        {% endif %}
     </div>
 </div>
 
+<div class="col-md-4">
+    <div class="pravaah-card h-100">
+
+        <div class="pravaah-icon">
+            <i class="fa-solid fa-user-shield"></i>
+        </div>
+
+        <h5 class="fw-bold mt-3">
+            Roles & Permissions
+        </h5>
+
+        <p class="text-muted small mb-4">
+            Configure access and permissions.
+        </p>
+
+        <a href="{% url 'usermgmt:admin_dashboard' %}"
+           class="btn pravaah-btn w-100">
+            Manage Roles
+        </a>
+
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="pravaah-card h-100">
+
+        <div class="pravaah-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+
+        <h5 class="fw-bold mt-3">
+            Audit Logs
+        </h5>
+
+        <p class="text-muted small mb-4">
+            Monitor user activities.
+        </p>
+
+        <a href="{% url 'usermgmt:audit_logs' %}"
+           class="btn pravaah-btn w-100">
+            View Logs
+        </a>
+
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="pravaah-card h-100">
+
+        <div class="pravaah-icon">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <h5 class="fw-bold mt-3">
+            Activity Dashboard
+        </h5>
+
+        <p class="text-muted small mb-4">
+            Analyze user activity and usage trends.
+        </p>
+
+        <a href="{% url 'usermgmt:activity_dashboard' %}"
+           class="btn pravaah-btn w-100">
+            Open Dashboard
+        </a>
+
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="pravaah-card h-100">
+
+        <div class="pravaah-icon">
+            <i class="fa-solid fa-file-invoice"></i>
+        </div>
+
+        <h5 class="fw-bold mt-3">
+            Reports
+        </h5>
+
+        <p class="text-muted small mb-4">
+            Generate and export management reports.
+        </p>
+
+        <a href="{% url 'usermgmt:reports' %}"
+           class="btn pravaah-btn w-100">
+            Generate Reports
+        </a>
+
+    </div>
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- Recent Activity -->
+
+<div class="pravaah-card mt-5">
+
+    <h5 class="fw-bold mb-4">
+        Recent Activity
+    </h5>
+
+    <div class="mb-3">
+        <span class="badge me-2"
+              style="background:#ff5c1a;">
+              CREATE
+        </span>
+        New user account created
+    </div>
+
+    <div class="mb-3">
+        <span class="badge me-2"
+              style="background:#0f1e45;">
+              ROLE
+        </span>
+        New role assigned
+    </div>
+
+    <div>
+        <span class="badge me-2"
+              style="background:#0a0a0a;">
+              UPDATE
+        </span>
+        Permission settings modified
+    </div>
+
+</div>
+
 <style>
-    .card-hover {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
-    }
-</style>
+
+.pravaah-card{
+    background:white;
+    border:2px solid #0a0a0a;
+    padding:24px;
+    box-shadow:6px 6px 0px #bdbdbd;
+    transition:.25s;
+}
+
+.pravaah-card:hover{
+    transform:translateY(-5px);
+}
+
+.pravaah-icon{
+    width:60px;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0a0a0a;
+    background:#f5f5f0;
+    border:2px solid #0a0a0a;
+    font-size:1.4rem;
+}
+
+.pravaah-btn{
+    background:#ff5c1a;
+    color:white;
+    border:none;
+    font-weight:600;
+}
+
+.pravaah-btn:hover{
+    background:#d94400;
+    color:white;
+}
+
+</style> 
 {% endblock %}
