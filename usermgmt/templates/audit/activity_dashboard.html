@@ -2,29 +2,120 @@
 
 {% block content %}
 
+<style>
+.pravaah-stat{
+    background:#ffffff;
+    border:2px solid #111827;
+    position:relative;
+    transition:.2s ease;
+    border-radius:0;
+}
+
+.pravaah-stat:hover{
+    transform:translateY(-3px);
+}
+
+.pravaah-stat::after{
+    content:"";
+    position:absolute;
+    right:-4px;
+    bottom:-4px;
+    width:100%;
+    height:100%;
+    background:#ff6b1a;
+    z-index:-1;
+}
+
+.pravaah-card{
+    border:2px solid #111827;
+    border-radius:0;
+    overflow:hidden;
+}
+
+.pravaah-header{
+    background:#111827;
+    color:#ffffff;
+    border-bottom:4px solid #ff6b1a;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.stat-label{
+    font-size:.75rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:#6b7280;
+}
+
+.stat-value{
+    font-size:2rem;
+    font-weight:800;
+    color:#111827;
+    margin-top:.25rem;
+}
+
+.table-dark{
+    background:#111827 !important;
+}
+
+.table-dark th{
+    background:#111827 !important;
+    color:#ffffff;
+    border:none;
+    text-transform:uppercase;
+    font-size:.8rem;
+    letter-spacing:1px;
+}
+
+.table-hover tbody tr:hover{
+    background:rgba(255,107,26,.06);
+}
+
+.chart-container{
+    height:300px;
+}
+
+.dashboard-title{
+    font-weight:800;
+    color:#111827;
+}
+
+.dashboard-subtitle{
+    color:#6b7280;
+}
+</style>
+
 <div class="container-fluid mt-4">
 
-    <h2 class="mb-4">
+    <div class="mb-4">
 
-        Activity Dashboard
+        <h2 class="dashboard-title mb-1">
+            Activity Dashboard
+        </h2>
 
-    </h2>
+        <p class="dashboard-subtitle mb-0">
+            Monitor users, access activity, audit logs and platform analytics.
+        </p>
 
-    <!-- MAIN STATS -->
+    </div>
 
     <div class="row mb-4">
 
-        <!-- TOTAL USERS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card text-white bg-primary shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Total Users</h6>
+                    <div class="stat-label">
+                        Total Users
+                    </div>
 
-                    <h2>{{ total_users }}</h2>
+                    <div class="stat-value">
+                        {{ total_users }}
+                    </div>
 
                 </div>
 
@@ -32,17 +123,19 @@
 
         </div>
 
-        <!-- TOTAL LOGS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card text-white bg-success shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Total Logs</h6>
+                    <div class="stat-label">
+                        Total Logs
+                    </div>
 
-                    <h2>{{ total_logs }}</h2>
+                    <div class="stat-value">
+                        {{ total_logs }}
+                    </div>
 
                 </div>
 
@@ -50,17 +143,19 @@
 
         </div>
 
-        <!-- TOTAL ROLES -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card text-white bg-warning shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Total Roles</h6>
+                    <div class="stat-label">
+                        Total Roles
+                    </div>
 
-                    <h2>{{ total_roles }}</h2>
+                    <div class="stat-value">
+                        {{ total_roles }}
+                    </div>
 
                 </div>
 
@@ -68,17 +163,19 @@
 
         </div>
 
-        <!-- TOTAL LOGINS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card text-white bg-danger shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Total Logins</h6>
+                    <div class="stat-label">
+                        Total Logins
+                    </div>
 
-                    <h2>{{ login_count }}</h2>
+                    <div class="stat-value">
+                        {{ login_count }}
+                    </div>
 
                 </div>
 
@@ -88,21 +185,21 @@
 
     </div>
 
-    <!-- EXTRA ANALYTICS -->
-
     <div class="row mb-4">
 
-        <!-- ACTIVE USERS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card bg-info text-white shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Active Users</h6>
+                    <div class="stat-label">
+                        Active Users
+                    </div>
 
-                    <h2>{{ active_users_count }}</h2>
+                    <div class="stat-value">
+                        {{ active_users_count }}
+                    </div>
 
                 </div>
 
@@ -110,17 +207,19 @@
 
         </div>
 
-        <!-- FAILED LOGINS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card bg-secondary text-white shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Failed Logins</h6>
+                    <div class="stat-label">
+                        Failed Logins
+                    </div>
 
-                    <h2>{{ failed_logins }}</h2>
+                    <div class="stat-value">
+                        {{ failed_logins }}
+                    </div>
 
                 </div>
 
@@ -128,29 +227,25 @@
 
         </div>
 
-        <!-- TOP ROLE -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card bg-dark text-white shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Top Role</h6>
+                    <div class="stat-label">
+                        Top Role
+                    </div>
 
-                    <h5>
+                    <div class="stat-value fs-4">
 
                         {% if top_role %}
-
                             {{ top_role.role_name }}
-
                         {% else %}
-
                             N/A
-
                         {% endif %}
 
-                    </h5>
+                    </div>
 
                 </div>
 
@@ -158,17 +253,19 @@
 
         </div>
 
-        <!-- RECENT REGISTRATIONS -->
-
         <div class="col-md-3 mb-3">
 
-            <div class="card bg-warning text-dark shadow h-100">
+            <div class="card pravaah-stat h-100">
 
                 <div class="card-body">
 
-                    <h6>Recent Registrations</h6>
+                    <div class="stat-label">
+                        Recent Registrations
+                    </div>
 
-                    <h2>{{ recent_registrations|length }}</h2>
+                    <div class="stat-value">
+                        {{ recent_registrations|length }}
+                    </div>
 
                 </div>
 
@@ -178,14 +275,10 @@
 
     </div>
 
-    <!-- RECENT USERS -->
+    <div class="card pravaah-card shadow-sm mb-4">
 
-    <div class="card shadow mb-4">
-
-        <div class="card-header bg-primary text-white">
-
+        <div class="card-header pravaah-header">
             Recent Registrations
-
         </div>
 
         <div class="card-body">
@@ -197,12 +290,10 @@
                     <thead class="table-dark">
 
                         <tr>
-
                             <th>Username</th>
                             <th>Email</th>
                             <th>Status</th>
                             <th>Joined</th>
-
                         </tr>
 
                     </thead>
@@ -214,11 +305,8 @@
                         <tr>
 
                             <td>{{ user.username }}</td>
-
                             <td>{{ user.email }}</td>
-
                             <td>{{ user.status }}</td>
-
                             <td>{{ user.created_at }}</td>
 
                         </tr>
@@ -227,11 +315,8 @@
 
                         <tr>
 
-                            <td colspan="4"
-                                class="text-center">
-
+                            <td colspan="4" class="text-center">
                                 No recent users found
-
                             </td>
 
                         </tr>
@@ -248,14 +333,10 @@
 
     </div>
 
-    <!-- RECENT ACTIVITIES -->
+    <div class="card pravaah-card shadow-sm mb-4">
 
-    <div class="card shadow mb-4">
-
-        <div class="card-header bg-dark text-white">
-
+        <div class="card-header pravaah-header">
             Recent Activities
-
         </div>
 
         <div class="card-body">
@@ -267,12 +348,10 @@
                     <thead class="table-dark">
 
                         <tr>
-
                             <th>User</th>
                             <th>Action</th>
                             <th>IP Address</th>
                             <th>Time</th>
-
                         </tr>
 
                     </thead>
@@ -280,16 +359,12 @@
                     <tbody>
 
                         {% for log in recent_logs %}
-                        
 
                         <tr>
 
                             <td>{{ log.user.username }}</td>
-
                             <td>{{ log.action }}</td>
-
                             <td>{{ log.ip_address }}</td>
-
                             <td>{{ log.created_at }}</td>
 
                         </tr>
@@ -298,11 +373,8 @@
 
                         <tr>
 
-                            <td colspan="4"
-                                class="text-center">
-
+                            <td colspan="4" class="text-center">
                                 No recent activities found
-
                             </td>
 
                         </tr>
@@ -319,25 +391,19 @@
 
     </div>
 
-    <!-- CHARTS -->
-
     <div class="row">
-
-        <!-- SYSTEM OVERVIEW -->
 
         <div class="col-md-6 mb-4">
 
-            <div class="card shadow h-100">
+            <div class="card pravaah-card h-100">
 
-                <div class="card-header bg-primary text-white">
-
+                <div class="card-header pravaah-header">
                     System Overview
-
                 </div>
 
                 <div class="card-body">
 
-                    <div style="height:300px;">
+                    <div class="chart-container">
 
                         <canvas id="dashboardChart"></canvas>
 
@@ -349,21 +415,17 @@
 
         </div>
 
-        <!-- ROLE DISTRIBUTION -->
-
         <div class="col-md-6 mb-4">
 
-            <div class="card shadow h-100">
+            <div class="card pravaah-card h-100">
 
-                <div class="card-header bg-dark text-white">
-
+                <div class="card-header pravaah-header">
                     Role Distribution
-
                 </div>
 
                 <div class="card-body">
 
-                    <div style="height:300px;">
+                    <div class="chart-container">
 
                         <canvas id="roleChart"></canvas>
 
@@ -379,21 +441,17 @@
 
     <div class="row">
 
-        <!-- USER STATUS -->
-
         <div class="col-md-6 mb-4">
 
-            <div class="card shadow h-100">
+            <div class="card pravaah-card h-100">
 
-                <div class="card-header bg-success text-white">
-
+                <div class="card-header pravaah-header">
                     User Status
-
                 </div>
 
                 <div class="card-body">
 
-                    <div style="height:300px;">
+                    <div class="chart-container">
 
                         <canvas id="statusChart"></canvas>
 
@@ -405,21 +463,17 @@
 
         </div>
 
-        <!-- AUDIT ACTIONS -->
-
         <div class="col-md-6 mb-4">
 
-            <div class="card shadow h-100">
+            <div class="card pravaah-card h-100">
 
-                <div class="card-header bg-info text-white">
-
+                <div class="card-header pravaah-header">
                     Audit Actions
-
                 </div>
 
                 <div class="card-body">
 
-                    <div style="height:300px;">
+                    <div class="chart-container">
 
                         <canvas id="auditChart"></canvas>
 
@@ -434,6 +488,10 @@
     </div>
 
 </div>
+
+<!-- KEEP YOUR EXISTING CHART.JS SCRIPT BELOW THIS -->
+
+
 
 <!-- CHART JS -->
 
