@@ -2,20 +2,92 @@
 {% block title %} Register {% endblock %}
 
 {% block content %}
+
+<style>
+  body{
+    background-color:#f5f5f5;
+    background-image:
+      linear-gradient(#e6e6e6 1px, transparent 1px),
+      linear-gradient(90deg,#e6e6e6 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+
+  .register-card{
+    max-width:900px;
+    margin:0 auto;
+    border:2px solid #000;
+    border-radius:0;
+  }
+
+  .register-card .form-control,
+  .register-card .form-select,
+  .register-card .input-group-text{
+    border-radius:0;
+  }
+
+  .register-card .form-control:focus,
+  .register-card .form-select:focus{
+    border-color:#ff6b1a;
+    box-shadow:none;
+  }
+
+  .pravaah-btn{
+    background:#ff6b1a;
+    border:none;
+    color:#fff;
+    border-radius:0;
+    transition:.3s;
+  }
+
+  .pravaah-btn:hover{
+    background:#e65f12;
+    color:#fff;
+  }
+
+  .brand-title{
+    font-size:2rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  .brand-title .orange{
+    color:#ff6b1a;
+  }
+
+  @media(max-width:768px){
+    .register-card{
+      max-width:100%;
+    }
+
+    .brand-title{
+      font-size:1.6rem;
+    }
+  }
+</style>
+
 <div class="row justify-content-center align-items-center py-4">
-  <div class="col-12 col-lg-8">
-    <div class="card shadow border-0 rounded-3 bg-white">
+  <div class="col-12">
+
+    <div class="card shadow register-card bg-white">
       <div class="card-body p-4 p-md-5">
-        
+
         <div class="text-center mb-4">
-          <i class="fa-solid fa-user-plus text-info fs-1 mb-2"></i>
-          <h2 class="fw-bold text-dark h3">Create Account</h2>
-          <p class="text-muted small">Set up credentials to access the PRAVAAH ERP system platforms</p>
+          <i class="fa-solid fa-user-plus fs-1 mb-3" style="color:#ff6b1a;"></i>
+
+          <h2 class="brand-title">
+            <span>PRAVAAH</span>
+            <span class="orange"> REGISTER</span>
+          </h2>
+
+          <p class="text-muted small">
+            Create a new account for the PRAVAAH ERP Management Suite
+          </p>
         </div>
 
         {% if messages %}
           {% for message in messages %}
-            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} border-0 shadow-sm small py-2.5 mb-4 d-flex align-items-center gap-2" role="alert">
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} border-0 shadow-sm small py-2 mb-4 d-flex align-items-center gap-2" role="alert">
               <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}"></i>
               <span>{{ message }}</span>
             </div>
@@ -26,61 +98,139 @@
           {% csrf_token %}
 
           <div class="row g-3 mb-3">
+
             <div class="col-md-6 col-12">
-              <label for="first_name" class="form-label fw-medium text-secondary small">First Name</label>
+              <label for="first_name" class="form-label fw-medium text-secondary small">
+                First Name
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-address-card small"></i></span>
-                <input type="text" id="first_name" name="first_name" class="form-control bg-light border-start-0" 
-                       placeholder="Enter first name" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-address-card small"></i>
+                </span>
+
+                <input
+                  type="text"
+                  id="first_name"
+                  name="first_name"
+                  class="form-control bg-light border-start-0"
+                  placeholder="Enter first name"
+                  required
+                />
               </div>
             </div>
 
             <div class="col-md-6 col-12">
-              <label for="last_name" class="form-label fw-medium text-secondary small">Last Name</label>
+              <label for="last_name" class="form-label fw-medium text-secondary small">
+                Last Name
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-address-card small"></i></span>
-                <input type="text" id="last_name" name="last_name" class="form-control bg-light border-start-0" 
-                       placeholder="Enter last name" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-address-card small"></i>
+                </span>
+
+                <input
+                  type="text"
+                  id="last_name"
+                  name="last_name"
+                  class="form-control bg-light border-start-0"
+                  placeholder="Enter last name"
+                  required
+                />
               </div>
             </div>
+
           </div>
 
           <div class="row g-3 mb-3">
+
             <div class="col-md-6 col-12">
-              <label for="username" class="form-label fw-medium text-secondary small">Username</label>
+              <label for="username" class="form-label fw-medium text-secondary small">
+                Username
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-at small"></i></span>
-                <input type="text" id="username" name="username" class="form-control bg-light border-start-0" 
-                       placeholder="Enter username" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-at small"></i>
+                </span>
+
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="form-control bg-light border-start-0"
+                  placeholder="Enter username"
+                  required
+                />
               </div>
             </div>
 
             <div class="col-md-6 col-12">
-              <label for="email" class="form-label fw-medium text-secondary small">Email Address</label>
+              <label for="email" class="form-label fw-medium text-secondary small">
+                Email Address
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-envelope small"></i></span>
-                <input type="email" id="email" name="email" class="form-control bg-light border-start-0" 
-                       placeholder="name@domain.com" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-envelope small"></i>
+                </span>
+
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control bg-light border-start-0"
+                  placeholder="name@domain.com"
+                  required
+                />
               </div>
             </div>
+
           </div>
 
           <div class="row g-3 mb-3">
+
             <div class="col-md-6 col-12">
-              <label for="mobile" class="form-label fw-medium text-secondary small">Mobile Number</label>
+              <label for="mobile" class="form-label fw-medium text-secondary small">
+                Mobile Number
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-phone small"></i></span>
-                <input type="tel" id="mobile" name="mobile" class="form-control bg-light border-start-0" 
-                       placeholder="Enter mobile number" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-phone small"></i>
+                </span>
+
+                <input
+                  type="tel"
+                  id="mobile"
+                  name="mobile"
+                  class="form-control bg-light border-start-0"
+                  placeholder="Enter mobile number"
+                  required
+                />
               </div>
             </div>
 
             <div class="col-md-6 col-12">
-              <label for="role" class="form-label fw-medium text-secondary small">Primary System Role</label>
+              <label for="role" class="form-label fw-medium text-secondary small">
+                Primary System Role
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-user-shield small"></i></span>
-                <select id="role" name="role" class="form-select bg-light border-start-0" required aria-required="true">
-                  <option value="" selected disabled>Select assigned authorization role</option>
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-user-shield small"></i>
+                </span>
+
+                <select
+                  id="role"
+                  name="role"
+                  class="form-select bg-light border-start-0"
+                  required
+                >
+                  <option value="" selected disabled>
+                    Select assigned authorization role
+                  </option>
                   <option value="Participant">Participant</option>
                   <option value="Trainer">Trainer</option>
                   <option value="Manager">Manager</option>
@@ -91,41 +241,79 @@
                 </select>
               </div>
             </div>
+
           </div>
 
           <div class="row g-3 mb-4">
+
             <div class="col-md-6 col-12">
-              <label for="password" class="form-label fw-medium text-secondary small">Password</label>
+              <label for="password" class="form-label fw-medium text-secondary small">
+                Password
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-key small"></i></span>
-                <input type="password" id="password" name="password" class="form-control bg-light border-start-0" 
-                       placeholder="••••••••" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-key small"></i>
+                </span>
+
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-control bg-light border-start-0"
+                  placeholder="••••••••"
+                  required
+                />
               </div>
             </div>
 
             <div class="col-md-6 col-12">
-              <label for="confirm_password" class="form-label fw-medium text-secondary small">Confirm Password</label>
+              <label for="confirm_password" class="form-label fw-medium text-secondary small">
+                Confirm Password
+              </label>
+
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-shield small"></i></span>
-                <input type="password" id="confirm_password" name="confirm_password" class="form-control bg-light border-start-0" 
-                       placeholder="••••••••" required aria-required="true" />
+                <span class="input-group-text bg-light text-muted border-end-0">
+                  <i class="fa-solid fa-shield small"></i>
+                </span>
+
+                <input
+                  type="password"
+                  id="confirm_password"
+                  name="confirm_password"
+                  class="form-control bg-light border-start-0"
+                  placeholder="••••••••"
+                  required
+                />
               </div>
             </div>
+
           </div>
 
-          <button type="submit" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase tracking-wide shadow-sm">
-            <i class="fa-solid fa-user-check me-1 text-info"></i> Commit Registration
+          <button
+            type="submit"
+            class="btn pravaah-btn w-100 py-2 fw-bold text-uppercase shadow-sm">
+            <i class="fa-solid fa-user-check me-2"></i>
+            Commit Registration
           </button>
+
         </form>
 
       </div>
     </div>
 
     <div class="text-center mt-4 small text-muted fw-medium">
-      Already possess an active system profile? 
-      <a href="{% url 'usermgmt:login' %}" class="text-primary text-decoration-none fw-bold ms-1">Sign In Here</a>
+      Already possess an active system profile?
+
+      <a
+        href="{% url 'usermgmt:login' %}"
+        class="text-decoration-none fw-bold ms-1"
+        style="color:#ff6b1a;">
+        Sign In Here
+      </a>
     </div>
 
   </div>
 </div>
+
 {% endblock %}

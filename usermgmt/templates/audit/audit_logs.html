@@ -2,36 +2,136 @@
 
 {% block content %}
 
+<style>
+    .pravaah-card{
+        border:2px solid #111827;
+        border-radius:0;
+        overflow:hidden;
+    }
+
+    .pravaah-header{
+        background:#111827;
+        color:#fff;
+        border-bottom:4px solid #ff6b1a;
+    }
+
+    .pravaah-btn{
+        background:#ff6b1a;
+        border-color:#ff6b1a;
+        color:#fff;
+        font-weight:600;
+    }
+
+    .pravaah-btn:hover{
+        background:#e65f12;
+        border-color:#e65f12;
+        color:#fff;
+    }
+
+    .pravaah-outline{
+        border:1px solid #111827;
+        color:#111827;
+        font-weight:600;
+    }
+
+    .pravaah-outline:hover{
+        background:#111827;
+        color:#fff;
+    }
+
+    .form-control:focus,
+    .form-select:focus{
+        border-color:#ff6b1a;
+        box-shadow:none;
+    }
+
+    .table-dark{
+        background:#111827 !important;
+    }
+
+    .table-dark th{
+        background:#111827 !important;
+        color:#fff;
+        border:none;
+        text-transform:uppercase;
+        font-size:.85rem;
+        letter-spacing:.5px;
+    }
+
+    .table-hover tbody tr:hover{
+        background:rgba(255,107,26,.05);
+    }
+
+    .audit-id{
+        color:#ff6b1a;
+        font-weight:700;
+    }
+
+    .page-link{
+        color:#111827;
+    }
+
+    .page-item.active .page-link{
+        background:#ff6b1a;
+        border-color:#ff6b1a;
+    }
+
+    .badge-login{
+        background:#198754;
+    }
+
+    .badge-logout{
+        background:#6c757d;
+    }
+
+    .badge-password{
+        background:#ffc107;
+        color:#111827;
+    }
+
+    .badge-delete{
+        background:#dc3545;
+    }
+
+    .badge-default{
+        background:#ff6b1a;
+    }
+</style>
+
 <div class="container-fluid">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="mb-4">
 
-        <h2 class="fw-bold">
-
+        <h2 class="fw-bold mb-1">
             Audit Logs
-
         </h2>
+
+        <p class="text-muted mb-0">
+            Monitor user activities and security events across the PRAVAAH platform.
+        </p>
 
     </div>
 
-    <div class="card shadow border-0">
+    <div class="card shadow-sm pravaah-card">
+
+        <div class="card-header pravaah-header">
+
+            <h5 class="mb-0 fw-bold">
+                Audit Log Registry
+            </h5>
+
+        </div>
 
         <div class="card-body">
-
-            <!-- FILTER FORM -->
 
             <form method="GET">
 
                 <div class="row mb-4">
 
-                    <!-- SEARCH -->
-
                     <div class="col-md-4">
 
-                        <label class="form-label">
-
+                        <label class="form-label fw-semibold">
                             Search Username
-
                         </label>
 
                         <input
@@ -43,14 +143,10 @@
 
                     </div>
 
-                    <!-- ACTION FILTER -->
-
                     <div class="col-md-3">
 
-                        <label class="form-label">
-
+                        <label class="form-label fw-semibold">
                             Action
-
                         </label>
 
                         <select
@@ -58,58 +154,42 @@
                             class="form-select">
 
                             <option value="">
-
                                 All Actions
-
                             </option>
 
                             <option value="Login">
-
                                 Login
-
                             </option>
 
                             <option value="Logout">
-
                                 Logout
-
                             </option>
 
                             <option value="Profile Updated">
-
                                 Profile Updated
-
                             </option>
 
                             <option value="Password Changed">
-
                                 Password Changed
-
                             </option>
 
                             <option value="User Created">
-
                                 User Created
-
                             </option>
 
                             <option value="User Deleted">
-
                                 User Deleted
-
                             </option>
 
                         </select>
 
                     </div>
 
-                    <!-- FILTER BUTTON -->
-
                     <div class="col-md-2 d-flex align-items-end">
 
                         <button
                             type="submit"
-                            class="btn btn-primary w-100">
+                            class="btn pravaah-btn w-100">
 
                             Filter
 
@@ -117,13 +197,11 @@
 
                     </div>
 
-                    <!-- RESET BUTTON -->
-
                     <div class="col-md-2 d-flex align-items-end">
 
                         <a
                             href="/audit-logs/"
-                            class="btn btn-secondary w-100">
+                            class="btn pravaah-outline w-100">
 
                             Reset
 
@@ -135,35 +213,23 @@
 
             </form>
 
-            <!-- TABLE -->
-
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover align-middle">
+                <table class="table table-hover align-middle">
 
                     <thead class="table-dark">
 
                         <tr>
 
-                            <th>
-                                ID
-                            </th>
+                            <th>ID</th>
 
-                            <th>
-                                User
-                            </th>
+                            <th>User</th>
 
-                            <th>
-                                Action
-                            </th>
+                            <th>Action</th>
 
-                            <th>
-                                IP Address
-                            </th>
+                            <th>IP Address</th>
 
-                            <th>
-                                Timestamp
-                            </th>
+                            <th>Timestamp</th>
 
                         </tr>
 
@@ -176,57 +242,47 @@
                         <tr>
 
                             <td>
-
-                                {{ log.log_id }}
-
+                                <span class="audit-id">
+                                    #{{ log.log_id }}
+                                </span>
                             </td>
 
                             <td>
-
-                                {{ log.user.username }}
-
+                                <strong>
+                                    {{ log.user.username }}
+                                </strong>
                             </td>
 
                             <td>
 
                                 {% if log.action == 'Login' %}
 
-                                    <span class="badge bg-success">
-
+                                    <span class="badge badge-login">
                                         {{ log.action }}
-
                                     </span>
 
                                 {% elif log.action == 'Logout' %}
 
-                                    <span class="badge bg-secondary">
-
+                                    <span class="badge badge-logout">
                                         {{ log.action }}
-
                                     </span>
 
                                 {% elif log.action == 'Password Changed' %}
 
-                                    <span class="badge bg-warning text-dark">
-
+                                    <span class="badge badge-password">
                                         {{ log.action }}
-
                                     </span>
 
                                 {% elif log.action == 'User Deleted' %}
 
-                                    <span class="badge bg-danger">
-
+                                    <span class="badge badge-delete">
                                         {{ log.action }}
-
                                     </span>
 
                                 {% else %}
 
-                                    <span class="badge bg-primary">
-
+                                    <span class="badge badge-default">
                                         {{ log.action }}
-
                                     </span>
 
                                 {% endif %}
@@ -234,15 +290,11 @@
                             </td>
 
                             <td>
-
                                 {{ log.ip_address }}
-
                             </td>
 
                             <td>
-
                                 {{ log.created_at }}
-
                             </td>
 
                         </tr>
@@ -252,7 +304,9 @@
                         <tr>
 
                             <td colspan="5"
-                                class="text-center text-muted">
+                                class="text-center text-muted py-5">
+
+                                <i class="fa-solid fa-file-circle-xmark fa-2x mb-3 d-block"></i>
 
                                 No audit logs found
 
@@ -273,13 +327,10 @@
     </div>
 
 </div>
-<!-- PAGINATION -->
 
 <nav class="mt-4">
 
     <ul class="pagination justify-content-center">
-
-        <!-- PREVIOUS -->
 
         {% if page_obj.has_previous %}
 
@@ -296,8 +347,6 @@
 
         {% endif %}
 
-        <!-- PAGE NUMBER -->
-
         <li class="page-item active">
 
             <span class="page-link">
@@ -307,8 +356,6 @@
             </span>
 
         </li>
-
-        <!-- NEXT -->
 
         {% if page_obj.has_next %}
 
