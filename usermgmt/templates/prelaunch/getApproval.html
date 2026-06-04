@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}Programme Gate Approval Checklist{% endblock %}
+
+{% block content %}
+<style>
+:root{
+    --orange:#f97316;
+    --orange-dark:#ea580c;
+    --black:#111827;
+    --gray-dark:#374151;
+    --gray-mid:#d1d5db;
+    --gray-light:#e5e7eb;
+    --gray-bg:#f8fafc;
+    --white:#ffffff;
+    --shadow:0 4px 12px rgba(0,0,0,.08);
+    --radius:14px;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+/* PAGE TITLE */
+.pg-title{
+    font-size:32px;
+    font-weight:700;
+    color:var(--black);
+}
+
+.pg-title .accent{
+    color:var(--orange);
+}
+
+/* CARDS */
+.p-card{
+    background:var(--white);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    margin-bottom:25px;
+}
+
+.p-card-head{
+    background:var(--orange);
+    color:white;
+    padding:14px 20px;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:.5px;
+}
+
+.p-card-body{
+    padding:25px;
+}
+
+/* STAT CARDS */
+.stat-card{
+    background:white;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px;
+    text-align:center;
+    height:100%;
+}
+
+.s-orange{
+    background:var(--orange);
+    color:white;
+}
+
+.s-black{
+    background:var(--black);
+    color:white;
+}
+
+.stat-label{
+    font-size:12px;
+    text-transform:uppercase;
+    font-weight:600;
+    opacity:.85;
+}
+
+.stat-value{
+    font-size:30px;
+    font-weight:700;
+    margin-top:8px;
+}
+
+/* LABELS */
+.p-label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    color:var(--gray-dark);
+    margin-bottom:7px;
+}
+
+/* INPUTS */
+.p-input,
+select,
+textarea{
+    width:100%;
+    border:1px solid var(--gray-mid);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:14px;
+    transition:.3s;
+    background:white;
+}
+
+.p-input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(249,115,22,.15);
+}
+
+textarea{
+    min-height:80px;
+    resize:vertical;
+}
+
+/* TABLE */
+.p-table-wrap{
+    overflow-x:auto;
+}
+
+.p-table{
+    width:100%;
+    min-width:1300px;
+    border-collapse:collapse;
+}
+
+.p-table thead th{
+    background:var(--black);
+    color:white;
+    padding:14px;
+    font-size:13px;
+    text-transform:uppercase;
+    font-weight:600;
+    text-align:left;
+}
+
+.p-table tbody td{
+    border:1px solid var(--gray-light);
+    padding:12px;
+    vertical-align:top;
+}
+
+.p-table tbody tr:nth-child(even){
+    background:var(--gray-bg);
+}
+
+.p-table select,
+.p-table textarea,
+.p-table input{
+    width:100%;
+}
+
+/* CHECKBOX */
+input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:var(--orange);
+    margin-right:8px;
+    cursor:pointer;
+}
+
+/* BUTTONS */
+.btn-p{
+    background:var(--orange);
+    color:white;
+    border:none;
+    padding:12px 28px;
+    border-radius:10px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-p:hover{
+    background:var(--orange-dark);
+}
+
+.btn-p-outline{
+    background:white;
+    color:var(--orange);
+    border:2px solid var(--orange);
+    padding:12px 28px;
+    border-radius:10px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-p-outline:hover{
+    background:var(--orange);
+    color:white;
+}
+
+/* APPROVAL CHECKBOX SECTION */
+.approval-check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+    color:var(--gray-dark);
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+
+    .pg-title{
+        font-size:24px;
+    }
+
+    .p-card-body{
+        padding:18px;
+    }
+
+    .stat-value{
+        font-size:24px;
+    }
+
+    .btn-p,
+    .btn-p-outline{
+        width:100%;
+    }
+}
+</style>
+<div class="container-fluid py-4">
+
+<h1 class="pg-title mb-4">PROGRAMME GATE <span class="accent">APPROVAL</span></h1>
+
+<form method="post">
+{% csrf_token %}
+
+<div class="row g-4 mb-4">
+<div class="col-md-3"><div class="stat-card"><div class="stat-label">Students</div><div class="stat-value">120</div></div></div>
+<div class="col-md-3"><div class="stat-card s-orange"><div class="stat-label">Checklist</div><div class="stat-value">25</div></div></div>
+<div class="col-md-3"><div class="stat-card"><div class="stat-label">Approved</div><div class="stat-value">18</div></div></div>
+<div class="col-md-3"><div class="stat-card s-black"><div class="stat-label">Pending</div><div class="stat-value">7</div></div></div>
+</div>
+
+<div class="p-card mb-4">
+<div class="p-card-head">PROGRAMME DETAILS</div>
+<div class="p-card-body">
+<div class="row g-3">
+<div class="col-md-4"><label class="p-label">PROGRAM PLAN START DATE</label><input type="date" class="p-input" name="program_start_date"></div>
+<div class="col-md-4"><label class="p-label">PROGRAM PLAN END DATE</label><input type="date" class="p-input" name="program_end_date"></div>
+<div class="col-md-4"><label class="p-label">SELECT PROGRAM PLAN</label><select class="p-input" name="program_plan"><option>Select Plan</option></select></div>
+<div class="col-md-6"><label class="p-label">STUDENT COUNT</label><input type="number" class="p-input" name="student_count"></div>
+<div class="col-md-6"><label class="p-label">PROVISIONAL NUMBER</label><input type="text" class="p-input" name="provisional_number"></div>
+</div>
+</div>
+</div>
+
+<div class="p-card mb-4">
+<div class="p-card-head">CHECKLIST ITEMS</div>
+<div class="p-card-body">
+<div class="p-table-wrap">
+<table class="p-table">
+<thead>
+<tr>
+<th>Activity</th>
+<th>Checkpoint</th>
+<th>Remarks</th>
+<th>Status</th>
+<th>Additional Remarks</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td>Training Need Identification</td>
+<td>
+<select>
+<option>Type of Training</option>
+<option>Course Content</option>
+</select>
+</td>
+<td><textarea></textarea></td>
+<td>
+<select>
+<option>Completed</option>
+<option>Pending</option>
+<option>Not Applicable</option>
+</select>
+</td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Preparation of Technical Proposal</td>
+<td>
+<select>
+<option>Availability of STA Infrastructure</option>
+<option>Availability of Consumables</option>
+<option>Availability of CTEA Infra</option>
+<option>Master Trainer Availability</option>
+<option>Availability of Training Material</option>
+<option>Availability of Training Material PPT</option>
+<option>Feedback of previous programmes to Master Trainers</option>
+</select>
+</td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Acceptance of Proposal from Client</td>
+<td><select><option>Confirmation by Client on Technical aspects</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Receive Training Details from Client</td>
+<td><select><option>Details – Mode of training and Start date</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Prescreening of Participants</td>
+<td><select><option>Composition of Participants</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Name of Client & Training Details</td>
+<td>
+<select>
+<option>Name of Client</option>
+<option>MT for Course Registration</option>
+<option>Number of Participants</option>
+<option>One-off / Recurring — Online / Offline</option>
+</select>
+</td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Session Plan & Coverage</td>
+<td><select><option>Availability</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Value Addition</td>
+<td><select><option>Teach Back / Mock Assessment / SME Talk etc.</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Assessments, Certification</td>
+<td>
+<select>
+<option>Formative</option>
+<option>Summative Assessment</option>
+<option>Certification</option>
+<option>Assessor(s)</option>
+</select>
+</td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Invoicing</td>
+<td><select><option>Documents</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Professional Fees</td>
+<td><select><option>Standard or any Deviations</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>Challenges & Mitigation Plan</td>
+<td><select><option>If Any</option></select></td>
+<td><textarea></textarea></td>
+<td><select><option>Completed</option><option>Pending</option><option>Not Applicable</option></select></td>
+<td><input type="text"></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="p-card">
+<div class="p-card-head">APPROVAL DETAILS</div>
+<div class="p-card-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="p-label">GATE APPROVAL MEETING ATTENDED BY</label><input type="text" class="p-input"></div>
+<div class="col-md-6"><label class="p-label">PREPARED BY</label><input type="text" class="p-input"></div>
+<div class="col-md-6"><label class="p-label">GATE APPROVAL BY</label><input type="text" class="p-input"></div>
+<div class="col-md-6"><label class="p-label">QUALITY ASSURANCE CHECKS</label><input type="text" class="p-input"></div>
+<div class="col-md-6"><label class="p-label">MANAGEMENT</label><input type="text" class="p-input"></div>
+<div class="col-md-4"><label class="p-label">DATE OF PREPARATION</label><input type="date" class="p-input"></div>
+<div class="col-md-4"><label class="p-label">LAST MODIFIED</label><input type="text" class="p-input" readonly value="Admin"></div>
+<div class="col-md-4"><label class="p-label">GATE APPROVAL DATE</label><input type="date" class="p-input"></div>
+</div>
+
+<div class="row mt-4">
+<div class="col-md-6"><input type="checkbox"> PROVISIONALLY APPROVED</div>
+<div class="col-md-6"><input type="checkbox"> FINAL APPROVAL</div>
+</div>
+
+<div class="mt-4 d-flex gap-3">
+<button type="submit" class="btn-p">SAVE DRAFT</button>
+<button type="submit" class="btn-p-outline">SUBMIT APPROVAL</button>
+</div>
+
+</div>
+</div>
+
+</form>
+</div>
+{% endblock %}

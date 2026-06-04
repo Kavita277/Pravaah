@@ -734,3 +734,6 @@ from django.shortcuts import render
 
 def test_page(request):
     return render(request, 'test.html')
+
+def gate_approval(request):
+    return render(request, 'prelaunch/getApproval.html')
