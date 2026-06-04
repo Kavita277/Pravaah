@@ -2,89 +2,254 @@
 
 {% block content %}
 
-<h2 class="mb-4">
+<style>
+    .profile-card{
+        border:2px solid #111827;
+        border-radius:0;
+        overflow:hidden;
+        background:#ffffff;
+    }
 
-    User Profile
+    .profile-header{
+        background:#111827;
+        color:#ffffff;
+        border-bottom:4px solid #ff6b1a;
+        padding:1rem 1.5rem;
+    }
 
-</h2>
+    .profile-avatar{
+        width:170px;
+        height:170px;
+        object-fit:cover;
+        border:4px solid #ff6b1a;
+        padding:6px;
+        background:#fff;
+    }
 
-<div class="card shadow p-4">
+    .profile-name{
+        font-size:2rem;
+        font-weight:800;
+        color:#111827;
+        margin-bottom:.25rem;
+    }
 
-    <div class="row">
+    .profile-role{
+        display:inline-block;
+        background:#ff6b1a;
+        color:#fff;
+        padding:.35rem .9rem;
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        margin:2px;
+    }
 
-        <div class="col-md-3 text-center">
+    .info-row{
+        padding:.9rem 0;
+        border-bottom:1px solid #e5e7eb;
+    }
 
-            <img
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                class="img-fluid rounded-circle"
-                width="150">
+    .info-row:last-child{
+        border-bottom:none;
+    }
+
+    .info-label{
+        font-size:.75rem;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        font-weight:700;
+        color:#6b7280;
+        margin-bottom:.25rem;
+    }
+
+    .info-value{
+        font-size:1rem;
+        font-weight:600;
+        color:#111827;
+    }
+
+    .status-active{
+        display:inline-block;
+        background:rgba(34,197,94,.12);
+        color:#15803d;
+        border:1px solid rgba(34,197,94,.3);
+        padding:.35rem .8rem;
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+    }
+
+    .status-inactive{
+        display:inline-block;
+        background:rgba(239,68,68,.12);
+        color:#dc2626;
+        border:1px solid rgba(239,68,68,.3);
+        padding:.35rem .8rem;
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+    }
+
+    .btn-pravaah{
+        background:#ff6b1a;
+        border:2px solid #ff6b1a;
+        color:#fff;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        padding:.75rem 1.5rem;
+    }
+
+    .btn-pravaah:hover{
+        background:#e65412;
+        border-color:#e65412;
+        color:#fff;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            User Profile
+        </h2>
+
+    </div>
+
+    <div class="card shadow-sm profile-card">
+
+        <div class="profile-header">
+
+            <h5 class="mb-0 fw-bold">
+                Profile Information
+            </h5>
 
         </div>
 
-        <div class="col-md-9">
+        <div class="card-body p-4 p-lg-5">
 
-            <h3>
+            <div class="row align-items-start">
 
-                {{ user_data.username }}
+                <div class="col-lg-4 text-center mb-4 mb-lg-0">
 
-            </h3>
+                    <img
+                        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        alt="Profile Avatar"
+                        class="profile-avatar rounded-circle">
 
-            <hr>
+                    <h3 class="profile-name mt-4">
+                        {{ user_data.username }}
+                    </h3>
 
-            <p>
+                    {% for group in user.groups.all %}
 
-                <strong>First Name:</strong>
+                    <span class="profile-role">
+                        {{ group.name }}
+                    </span>
 
-                {{ user_data.first_name }}
+                    {% empty %}
 
-            </p>
+                    <span class="profile-role">
+                        No Role
+                    </span>
 
-            <p>
+                    {% endfor %}
 
-                <strong>Last Name:</strong>
+                </div>
 
-                {{ user_data.last_name }}
+                <div class="col-lg-8">
 
-            </p>
+                    <div class="info-row">
 
-            <p>
+                        <div class="info-label">
+                            First Name
+                        </div>
 
-                <strong>Email:</strong>
+                        <div class="info-value">
+                            {{ user_data.first_name }}
+                        </div>
 
-                {{ user_data.email }}
+                    </div>
 
-            </p>
+                    <div class="info-row">
 
-            <p>
+                        <div class="info-label">
+                            Last Name
+                        </div>
 
-                <strong>Mobile:</strong>
+                        <div class="info-value">
+                            {{ user_data.last_name }}
+                        </div>
 
-                {{ user_data.mobile }}
+                    </div>
 
-            </p>
+                    <div class="info-row">
 
-            <p>
+                        <div class="info-label">
+                            Email Address
+                        </div>
 
-                <strong>Role:</strong>
+                        <div class="info-value">
+                            {{ user_data.email }}
+                        </div>
 
-                {{ user_data.role.role_name }}
+                    </div>
 
-            </p>
+                    <div class="info-row">
 
-            <p>
+                        <div class="info-label">
+                            Mobile Number
+                        </div>
 
-                <strong>Status:</strong>
+                        <div class="info-value">
+                            {{ user_data.mobile }}
+                        </div>
 
-                {{ user_data.status }}
+                    </div>
 
-            </p>
+                    <div class="info-row">
 
-            <a href="/profile/edit/"
-               class="btn btn-primary">
+                        <div class="info-label">
+                            Account Status
+                        </div>
 
-                Edit Profile
+                        <div class="info-value">
 
-            </a>
+                            {% if user_data.is_active %}
+
+                            <span class="status-active">
+                                Active
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-inactive">
+                                Inactive
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4">
+
+                        <a href="/profile/edit/"
+                           class="btn btn-pravaah">
+
+                            <i class="fa-solid fa-user-pen me-2"></i>
+                            Edit Profile
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 

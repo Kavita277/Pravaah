@@ -3,47 +3,238 @@
 {% block title %} PRAVAAH - Assign User Role {% endblock %}
 
 {% block content %}
-<div class="container my-2" style="max-width: 650px;">
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white py-3">
-            <h5 class="mb-0"><i class="fa-solid fa-user-shield me-2"></i>Assign Single System Role to User</h5>
+
+<style>
+    .assign-card{
+        border:2px solid #111827;
+        overflow:hidden;
+        background:#fff;
+    }
+
+    .assign-header{
+        background:#111827;
+        color:#fff;
+        padding:1rem 1.5rem;
+        border-bottom:4px solid #ff6b1a;
+    }
+
+    .form-label{
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        color:#6b7280;
+        margin-bottom:.5rem;
+    }
+
+    .assign-card select{
+        border:2px solid #e5e7eb;
+        padding:.8rem 1rem;
+        border-radius:0;
+    }
+
+    .assign-card select:focus{
+        border-color:#ff6b1a;
+        box-shadow:none;
+    }
+
+    .role-box{
+        border:2px solid #e5e7eb;
+        background:#f8fafc;
+        padding:1rem;
+    }
+
+    .role-item{
+        padding:.85rem 1rem;
+        border:1px solid #e5e7eb;
+        background:#fff;
+        margin-bottom:.75rem;
+        transition:.2s;
+    }
+
+    .role-item:hover{
+        border-color:#ff6b1a;
+        background:#fff7f2;
+    }
+
+    .role-item:last-child{
+        margin-bottom:0;
+    }
+
+    .role-item label{
+        cursor:pointer;
+        width:100%;
+        margin:0;
+    }
+
+    .btn-pravaah{
+        background:#ff6b1a;
+        border:2px solid #ff6b1a;
+        color:#fff;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        padding:.75rem 1.5rem;
+    }
+
+    .btn-pravaah:hover{
+        background:#e65412;
+        border-color:#e65412;
+        color:#fff;
+    }
+
+    .btn-cancel{
+        border:2px solid #111827;
+        color:#111827;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        padding:.75rem 1.5rem;
+    }
+
+    .btn-cancel:hover{
+        background:#111827;
+        color:#fff;
+    }
+
+    .page-title{
+        font-weight:800;
+        color:#111827;
+    }
+</style>
+
+<div class="container" style="max-width:700px;">
+
+    <div class="mb-4">
+
+        <h2 class="page-title mb-1">
+            Assign User Role
+        </h2>
+
+        <p class="text-muted mb-0">
+            Assign a single operational role to a user account.
+        </p>
+
+    </div>
+
+    <div class="card assign-card shadow-sm">
+
+        <div class="assign-header">
+
+            <h5 class="mb-0 fw-bold">
+                <i class="fa-solid fa-user-shield me-2"></i>
+                Role Assignment
+            </h5>
+
         </div>
+
         <div class="card-body p-4">
+
             <form method="POST" action="{% url 'usermgmt:assign_role' %}">
+
                 {% csrf_token %}
 
                 <div class="mb-4">
-                    <label for="userSelect" class="form-label fw-bold small">Select Target User Profile</label>
-                    <select class="form-select" id="userSelect" name="user_id" required>
-                        <option value="" disabled selected>Choose user account...</option>
+
+                    <label for="userSelect" class="form-label">
+                        Select User
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="userSelect"
+                        name="user_id"
+                        required>
+
+                        <option value="" disabled selected>
+                            Choose user account...
+                        </option>
+
                         {% for user in users %}
-                        <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+
+                        <option value="{{ user.id }}">
+                            {{ user.username }} ({{ user.email }})
+                        </option>
+
                         {% endfor %}
+
                     </select>
+
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold small d-block mb-2">Select System Designation Role</label>
-                    <div class="border rounded p-3 bg-light">
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Select Role
+                    </label>
+
+                    <div class="role-box">
+
                         {% for role in roles %}
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="role_name" value="{{ role.name }}" id="role_{{ role.id }}" required>
-                            <label class="form-check-label" for="role_{{ role.id }}">
-                                <strong>{{ role.name }}</strong>
-                            </label>
+
+                        <div class="role-item">
+
+                            <div class="form-check">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="role_name"
+                                    value="{{ role.name }}"
+                                    id="role_{{ role.id }}"
+                                    required>
+
+                                <label
+                                    class="form-check-label fw-semibold"
+                                    for="role_{{ role.id }}">
+
+                                    {{ role.name }}
+
+                                </label>
+
+                            </div>
+
                         </div>
+
                         {% empty %}
-                        <p class="text-muted small mb-0">No roles available. Seed the database first.</p>
+
+                        <div class="text-muted">
+                            No roles available. Seed the database first.
+                        </div>
+
                         {% endfor %}
+
                     </div>
+
                 </div>
 
-                <div class="d-flex justify-content-end gap-2 mt-4">
-                    <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-success px-4">Update Role Assignment</button>
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{% url 'usermgmt:admin_dashboard' %}"
+                        class="btn btn-cancel">
+
+                        Cancel
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-pravaah">
+
+                        <i class="fa-solid fa-floppy-disk me-2"></i>
+                        Update Role
+
+                    </button>
+
                 </div>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}

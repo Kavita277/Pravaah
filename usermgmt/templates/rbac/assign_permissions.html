@@ -3,53 +3,261 @@
 {% block title %} PRAVAAH - Assign Permissions {% endblock %}
 
 {% block content %}
-<div class="container my-2" style="max-width: 700px;">
-    <div class="card shadow-sm border-0 border-top border-success border-4">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 text-dark fw-bold">
-                <i class="fa-solid fa-key me-2 text-success"></i>Configure Policy Rules Override
+
+<style>
+    .permission-card{
+        border:2px solid #111827;
+        overflow:hidden;
+        background:#fff;
+    }
+
+    .permission-header{
+        background:#111827;
+        color:#fff;
+        padding:1rem 1.5rem;
+        border-bottom:4px solid #ff6b1a;
+    }
+
+    .page-title{
+        font-weight:800;
+        color:#111827;
+    }
+
+    .form-label{
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        color:#6b7280;
+        margin-bottom:.5rem;
+    }
+
+    .permission-card select{
+        border:2px solid #e5e7eb;
+        padding:.8rem 1rem;
+        border-radius:0;
+    }
+
+    .permission-card select:focus{
+        border-color:#ff6b1a;
+        box-shadow:none;
+    }
+
+    .permission-box{
+        border:2px solid #e5e7eb;
+        background:#f8fafc;
+        padding:1.25rem;
+    }
+
+    .permission-title{
+        font-size:.75rem;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        color:#6b7280;
+        margin-bottom:1rem;
+    }
+
+    .permission-item{
+        background:#fff;
+        border:1px solid #e5e7eb;
+        padding:.85rem 1rem;
+        margin-bottom:.75rem;
+        transition:.2s;
+    }
+
+    .permission-item:hover{
+        border-color:#ff6b1a;
+        background:#fff7f2;
+    }
+
+    .permission-item:last-child{
+        margin-bottom:0;
+    }
+
+    .perm-code{
+        background:#111827;
+        color:#ff6b1a;
+        padding:.2rem .5rem;
+        font-size:.75rem;
+        border-radius:4px;
+        font-weight:600;
+    }
+
+    .btn-pravaah{
+        background:#ff6b1a;
+        border:2px solid #ff6b1a;
+        color:#fff;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        padding:.75rem 1.5rem;
+    }
+
+    .btn-pravaah:hover{
+        background:#e65412;
+        border-color:#e65412;
+        color:#fff;
+    }
+
+    .btn-back{
+        border:2px solid #111827;
+        color:#111827;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        padding:.75rem 1.5rem;
+    }
+
+    .btn-back:hover{
+        background:#111827;
+        color:#fff;
+    }
+
+    .form-check-input:checked{
+        background-color:#ff6b1a;
+        border-color:#ff6b1a;
+    }
+
+    .form-check-input:focus{
+        box-shadow:none;
+        border-color:#ff6b1a;
+    }
+</style>
+
+<div class="container" style="max-width:800px;">
+
+    <div class="mb-4">
+
+        <h2 class="page-title mb-1">
+            Assign Permissions
+        </h2>
+
+        <p class="text-muted mb-0">
+            Configure access capabilities and permission policies for system roles.
+        </p>
+
+    </div>
+
+    <div class="card permission-card shadow-sm">
+
+        <div class="permission-header">
+
+            <h5 class="mb-0 fw-bold">
+                <i class="fa-solid fa-key me-2"></i>
+                Permission Configuration
             </h5>
+
         </div>
+
         <div class="card-body p-4">
+
             <form method="POST" action="{% url 'usermgmt:assign_permissions' %}">
+
                 {% csrf_token %}
 
                 <div class="mb-4">
-                    <label for="roleTarget" class="form-label fw-bold small text-secondary">Target Authority Context (Role)</label>
-                    <select class="form-select shadow-none" id="roleTarget" name="role_id" required>
-                        <option value="" disabled selected>Choose a role group to configure...</option>
+
+                    <label for="roleTarget" class="form-label">
+                        Select Role
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="roleTarget"
+                        name="role_id"
+                        required>
+
+                        <option value="" disabled selected>
+                            Choose a role group...
+                        </option>
+
                         {% for role in roles %}
-                        <option value="{{ role.id }}">{{ role.name }}</option>
+
+                        <option value="{{ role.id }}">
+                            {{ role.name }}
+                        </option>
+
                         {% endfor %}
+
                     </select>
+
                 </div>
 
-                <div class="border rounded p-3 bg-light">
-                    <h6 class="fw-bold mb-3 small text-uppercase text-secondary tracking-wider">Toggle Active System Capabilities</h6>
-                    
-                    {% for perm in permissions %}
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="permissions" value="{{ perm.id }}" id="perm_{{ perm.id }}">
-                        <label class="form-check-label small ms-2 align-middle" for="perm_{{ perm.id }}">
-                            <code class="text-danger fw-bold me-2">{{ perm.content_type.app_label }}.{{ perm.codename }}</code> 
-                            <span class="text-muted">— {{ perm.name }}</span>
-                        </label>
+                <div class="permission-box">
+
+                    <div class="permission-title">
+                        Available Permissions
                     </div>
+
+                    {% for perm in permissions %}
+
+                    <div class="permission-item">
+
+                        <div class="form-check form-switch">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="permissions"
+                                value="{{ perm.id }}"
+                                id="perm_{{ perm.id }}">
+
+                            <label
+                                class="form-check-label ms-2"
+                                for="perm_{{ perm.id }}">
+
+                                <span class="perm-code">
+                                    {{ perm.content_type.app_label }}.{{ perm.codename }}
+                                </span>
+
+                                <div class="mt-2 text-dark fw-semibold">
+                                    {{ perm.name }}
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
                     {% empty %}
-                    <p class="text-muted small mb-0 py-2">No custom capability tokens found in the application metadata schema registry.</p>
+
+                    <div class="text-muted">
+                        No permissions found in the system.
+                    </div>
+
                     {% endfor %}
+
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary px-4">
+                <div class="d-flex justify-content-between mt-4">
+
+                    <a
+                        href="{% url 'usermgmt:admin_dashboard' %}"
+                        class="btn btn-back">
+
                         Go Back
+
                     </a>
-                    <button type="submit" class="btn btn-success px-4 fw-bold">
-                        <i class="fa-solid fa-check-double me-2"></i>Commit Policy Changes
+
+                    <button
+                        type="submit"
+                        class="btn btn-pravaah">
+
+                        <i class="fa-solid fa-check-double me-2"></i>
+                        Save Permissions
+
                     </button>
+
                 </div>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}
