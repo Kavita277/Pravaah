@@ -171,6 +171,10 @@
     .btn-logout-top:hover { background: #d94400 !important; }
 
     /* ─── SIDEBAR ─── */
+    <div style="color:red;">
+  Super Admin Check: {{ user|has_group:"Super Admin" }}
+</div>
+    
     .sidebar {
       position: fixed;
       top: var(--top-h); left: 0;
@@ -515,7 +519,8 @@
   <div style="flex:1;"></div>
 
   <div class="topbar-right">
-    {% if user.is_authenticated %}
+    
+    {% if user|has_group:"Super Admin" %}
     <a href="#">
     <i class="fa-solid fa-bell"></i>
     Notifications
@@ -543,29 +548,137 @@
   </div>
 
   {% if user.is_authenticated %}
-  <div class="sb-section">
-    <div class="sb-label">User Management</div>
-    <button class="sb-item" onclick="toggleSub('s1',this)">
-      <i class="fa-solid fa-users-gear"></i> Users & Access
-      <i class="fa-solid fa-chevron-down sb-arrow"></i>
-    </button>
-    <div class="sb-sub" id="s1">
-      <a href="{% url 'usermgmt:register' %}" class="sb-item"><i class="fa-solid fa-user-plus"></i> Register User</a>
-      <a href="{% url 'usermgmt:users_list' %}" class="sb-item"><i class="fa-solid fa-list-ul"></i> All Users</a>
-      <a href="{% url 'usermgmt:profile' %}" class="sb-item"><i class="fa-solid fa-id-card"></i> My Profile</a>
-    </div>
-    <button class="sb-item" onclick="toggleSub('s2',this)">
-      <i class="fa-solid fa-shield-halved"></i> Roles & Perms
-      <i class="fa-solid fa-chevron-down sb-arrow"></i>
-    </button>
-    <div class="sb-sub" id="s2">
-      <a href="{% url 'usermgmt:admin_dashboard' %}" class="sb-item"><i class="fa-solid fa-gauge"></i> RBAC Dashboard</a>
-      <a href="{% url 'usermgmt:roles_list' %}" class="sb-item"><i class="fa-solid fa-user-tag"></i> Roles Board</a>
-      <a href="{% url 'usermgmt:permission_matrix' %}" class="sb-item"><i class="fa-solid fa-table-cells"></i> Perm Matrix</a>
-     
-    </div>
-  </div>
 
+    {% if user|has_group:"Super Admin" %}
+      <div class="sb-section">
+        <div class="sb-label">User Management</div>
+
+        <button class="sb-item" onclick="toggleSub('s1',this)">
+          <i class="fa-solid fa-users-gear"></i> Users & Access
+          <i class="fa-solid fa-chevron-down sb-arrow"></i>
+        </button>
+
+        <div class="sb-sub" id="s1">
+
+          <button class="sb-item" onclick="toggleSub('s2',this)">
+            <i class="fa-solid fa-shield-halved"></i> Roles & Permissions
+            <i class="fa-solid fa-chevron-down sb-arrow"></i>
+          </button>
+
+          <div class="sb-sub" id="s2">
+            <a href="{% url 'usermgmt:admin_dashboard' %}" class="sb-item">
+              <i class="fa-solid fa-gauge"></i> RBAC Dashboard
+            </a>
+            <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+              <i class="fa-solid fa-user-tag"></i> Roles Board
+            </a>
+            <a href="{% url 'usermgmt:permission_matrix' %}" class="sb-item">
+              <i class="fa-solid fa-table-cells"></i> Permission Matrix
+            </a>
+            <a href="{% url 'usermgmt:assign_role' %}" class="sb-item">
+              <i class="fa-solid fa-user-gear"></i> Assign Role
+            </a>
+            <a href="{% url 'usermgmt:assign_permissions' %}" class="sb-item">
+              <i class="fa-solid fa-key"></i> Assign Permissions
+            </a>
+            <a href="{% url 'usermgmt:rbac_users_list' %}" class="sb-item">
+              <i class="fa-solid fa-users"></i> User Registry
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="sb-divider">
+
+      <div class="sb-section">
+        <div class="sb-label">Monitoring</div>
+        <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item">
+          <i class="fa-solid fa-clipboard-list"></i> Audit Logs
+        </a>
+        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
+          <i class="fa-solid fa-chart-line"></i> Activity Dashboard
+        </a>
+      </div>
+
+      <hr class="sb-divider">
+
+      <div class="sb-section">
+        <div class="sb-label">Reports</div>
+        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+          <i class="fa-solid fa-file-invoice"></i> Reports
+        </a>
+      </div>
+
+    {% elif user|has_group:"Training Manager" %}
+      <div class="sb-section">
+        <div class="sb-label">Training Management</div>
+        <a href="{% url 'usermgmt:users_list' %}" class="sb-item">
+          <i class="fa-solid fa-users"></i> Participant Management
+        </a>
+        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+          <i class="fa-solid fa-book"></i> Course Management
+        </a>
+        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
+          <i class="fa-solid fa-hotel"></i> Hostel Management
+        </a>
+      </div>
+
+    {% elif user|has_group:"Master Trainer" or user|has_group:"Trainer" %}
+      <div class="sb-section">
+        <div class="sb-label">Trainer Access</div>
+        <a href="{% url 'usermgmt:users_list' %}" class="sb-item">
+          <i class="fa-solid fa-users"></i> Participant Management
+        </a>
+        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+      </div>
+
+    {% elif user|has_group:"Hostel Admin" %}
+      <div class="sb-section">
+        <div class="sb-label">Hostel Management</div>
+        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
+          <i class="fa-solid fa-hotel"></i> Hostel Management
+        </a>
+      </div>
+
+    {% elif user|has_group:"Accounts Admin" or user|has_group:"Accounts" %}
+      <div class="sb-section">
+        <div class="sb-label">Accounts Management</div>
+        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+      </div>
+
+    {% elif user|has_group:"Participant" %}
+      <div class="sb-section">
+        <div class="sb-label">My Account</div>
+        <a href="{% url 'usermgmt:profile' %}" class="sb-item">
+          <i class="fa-solid fa-id-card"></i> My Profile
+        </a>
+      </div>
+
+    {% elif user|has_group:"Staff" %}
+      <div class="sb-section">
+        <div class="sb-label">Staff Workbench</div>
+        <a href="{% url 'usermgmt:profile' %}" class="sb-item">
+          <i class="fa-solid fa-id-card"></i> My Profile
+        </a>
+      </div>
+
+    {% else %}
+      <div class="sb-section">
+        <div class="sb-label">My Account</div>
+        <a href="{% url 'usermgmt:profile' %}" class="sb-item">
+          <i class="fa-solid fa-id-card"></i> My Profile
+        </a>
+      </div>
+
+    {% endif %}
 
   {% endif %}
 </aside>
@@ -586,43 +699,6 @@
       </div>
     {% endfor %}
   </div>
-
-  ```html
-<hr class="sb-divider">
-
-<div class="sb-section">
-
-    <div class="sb-label">
-        Monitoring
-    </div>
-
-    <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item">
-        <i class="fa-solid fa-clipboard-list"></i>
-        Audit Logs
-    </a>
-
-    <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
-        <i class="fa-solid fa-chart-line"></i>
-        Activity Dashboard
-    </a>
-
-</div>
-
-<hr class="sb-divider">
-
-<div class="sb-section">
-
-    <div class="sb-label">
-        Reports
-    </div>
-
-    <a href="{% url 'usermgmt:reports' %}" class="sb-item">
-        <i class="fa-solid fa-file-invoice"></i>
-        Reports
-    </a>
-
-</div>
-```
 
   {% endif %}
 
