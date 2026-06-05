@@ -36,7 +36,7 @@
    style="color:#ff5c1a;"></i>
 
                 <h2 class="fw-bold mb-1">
-                    120
+                    {{ total_users }}
                 </h2>
 
                 <p class="text-muted mb-0">
@@ -59,7 +59,7 @@
    style="color:#ff5c1a;"></i>
 
                 <h2 class="fw-bold mb-1">
-                    95
+                    {{ active_users }}
                 </h2>
 
                 <p class="text-muted mb-0">
@@ -81,7 +81,7 @@
                 <i class="fa-solid fa-user-shield fa-2x mb-3"
    style="color:#ff5c1a;"></i>
                 <h2 class="fw-bold mb-1">
-                    8
+                    {{ total_roles }}
                 </h2>
 
                 <p class="text-muted mb-0">
@@ -104,7 +104,7 @@
    style="color:#0a0a0a;"></i>
 
                 <h2 class="fw-bold mb-1">
-                    1240
+                    {{ total_audit_logs }}
                 </h2>
 
                 <p class="text-muted mb-0">
@@ -279,13 +279,11 @@
 
                         <div class="col-md-4">
 
-                            <a href="{% url 'usermgmt:getApproval' %}"
-                            <a href="#"
+                            <a href="{% url 'usermgmt:gate_approval' %}"
                                class="btn pravaah-btn w-100 py-3">
 
                                 <i class="fa-solid fa-clipboard-check d-block mb-2"></i>
 
-                            Gate Approval Checklist
                                 Get Approval Checklist
 
                             </a>
@@ -294,7 +292,6 @@
 
                         <div class="col-md-4">
 
-                            <a href=""
                             <a href="#"
                                class="btn pravaah-btn w-100 py-3">
 

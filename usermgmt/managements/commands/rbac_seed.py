@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from usermgmt.models import RBACPermissionProxy
+from usermgmt.models import RBACPermissionProxy, Role
 
 class Command(BaseCommand):
     help = 'Populates the database with extended roles and granular permission sets'
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         # Sync roles into Group model records
         groups_dict = {}
         for role_name in roles_to_create:
-            group, created = Group.objects.get_or_create(name=role_name)
+            group, created = Role.objects.get_or_create(role_name=role_name)
             groups_dict[role_name] = group
             if created:
                 self.stdout.write(f"Generated target role: {role_name}")
@@ -76,3 +76,4 @@ class Command(BaseCommand):
         ])
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded all new roles and safe view permission tokens!'))
+

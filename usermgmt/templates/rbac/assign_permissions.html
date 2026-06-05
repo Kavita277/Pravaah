@@ -168,14 +168,14 @@
                         name="role_id"
                         required>
 
-                        <option value="" disabled selected>
+                        <option value="" disabled {% if not selected_role %}selected{% endif %}>
                             Choose a role group...
                         </option>
 
                         {% for role in roles %}
 
-                        <option value="{{ role.id }}">
-                            {{ role.name }}
+                        <option value="{{ role.role_id }}" {% if selected_role and role.role_id == selected_role.role_id %}selected{% endif %}>
+                            {{ role.role_name }}
                         </option>
 
                         {% endfor %}
@@ -201,18 +201,19 @@
                                 type="checkbox"
                                 name="permissions"
                                 value="{{ perm.id }}"
-                                id="perm_{{ perm.id }}">
+                                id="perm_{{ perm.id }}"
+                                {% if selected_role and perm in selected_role.permissions.all %}checked{% endif %}>
 
                             <label
                                 class="form-check-label ms-2"
                                 for="perm_{{ perm.id }}">
 
                                 <span class="perm-code">
-                                    {{ perm.content_type.app_label }}.{{ perm.codename }}
+                                    usermgmt.{{ perm.permission_name }}
                                 </span>
 
                                 <div class="mt-2 text-dark fw-semibold">
-                                    {{ perm.name }}
+                                    {{ perm.permission_name }}{% if perm.description %} - {{ perm.description }}{% endif %}
                                 </div>
 
                             </label>
@@ -259,5 +260,16 @@
     </div>
 
 </div>
+
+{% block extra_js %}
+<script>
+    document.getElementById('roleTarget').addEventListener('change', function() {
+        const roleId = this.value;
+        if (roleId) {
+            window.location.href = "?role_id=" + roleId;
+        }
+    });
+</script>
+{% endblock %}
 
 {% endblock %}

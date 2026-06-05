@@ -8,4 +8,6 @@ def has_group(user, group_name):
         return False
     if user.is_superuser:
         return True
-    return user.groups.filter(name=group_name).exists()
+    if user.role and user.role.role_name == group_name:
+        return True
+    return user.roles.filter(role_name=group_name).exists()

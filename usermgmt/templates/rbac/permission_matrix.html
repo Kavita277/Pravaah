@@ -1,56 +1,366 @@
 {% extends 'base.html' %}
 
-{% block title %} PRAVAAH - Access Control Matrix {% endblock %}
+{% block title %} PRAVAAH - Permission Matrix {% endblock %}
+
+{% block extra_css %}
+<style>
+    .text-orange {
+        color: var(--orange) !important;
+    }
+    .bg-orange {
+        background-color: var(--orange) !important;
+    }
+    .border-orange {
+        border-color: var(--orange) !important;
+    }
+    .matrix-card {
+        border: 2px solid var(--black);
+        background: #fff;
+        position: relative;
+    }
+    .matrix-card::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        right: -6px;
+        width: 100%;
+        height: 100%;
+        background: var(--orange);
+        z-index: -1;
+    }
+    .matrix-table-wrap {
+        border: 2px solid var(--black);
+        overflow: hidden;
+        border-radius: 0;
+    }
+    .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+    }
+    .matrix-table thead tr {
+        background: var(--black);
+    }
+    .matrix-table thead th {
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 14px 16px;
+        border: none;
+        text-align: center;
+    }
+    .matrix-table thead th.text-start {
+        text-align: left;
+    }
+    .matrix-table tbody tr {
+        border-bottom: 2px solid var(--black);
+        transition: background-color 0.15s ease;
+    }
+    .matrix-table tbody td {
+        padding: 12px 16px;
+        font-size: 0.82rem;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .matrix-table tbody td.text-start {
+        text-align: left;
+    }
+    /* Cell interactive highlighting states */
+    .bg-hover-row {
+        background-color: #fff6f0 !important;
+    }
+    .bg-hover-col {
+        background-color: #fff0e6 !important;
+    }
+    .matrix-checkbox {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--orange);
+        cursor: pointer;
+        border: 2px solid var(--black);
+        transition: transform 0.12s ease;
+    }
+    .matrix-checkbox:hover {
+        transform: scale(1.2);
+    }
+    .btn-pravaah {
+        background: var(--orange);
+        border: 2px solid var(--black);
+        color: #fff;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px 24px;
+        transition: all 0.15s ease;
+    }
+    .btn-pravaah:hover {
+        background: #d94400;
+        transform: translate(-1px, -1px);
+        box-shadow: 2px 2px 0 var(--black);
+    }
+    .btn-cancel {
+        border: 2px solid var(--black);
+        color: var(--black);
+        background: transparent;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px 24px;
+        transition: all 0.15s ease;
+        text-decoration: none;
+    }
+    .btn-cancel:hover {
+        background: var(--black);
+        color: #fff;
+    }
+    /* Toast notifications style */
+    .toast-container {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 9999;
+    }
+    .custom-toast {
+        background: #fff;
+        border: 2px solid var(--black);
+        border-left: 6px solid var(--orange);
+        padding: 1rem 1.5rem;
+        min-width: 320px;
+        box-shadow: 4px 4px 0 var(--black);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .custom-toast.error {
+        border-left-color: #ef4444;
+    }
+    .custom-toast.success {
+        border-left-color: #22c55e;
+    }
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
+
+<!-- Custom Toast Notifications Container -->
+<div class="toast-container" id="toastContainer">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="custom-toast {% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% endif %}">
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'success' %}
+                        <i class="fa-solid fa-circle-check text-success fs-5 me-3"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="fa-solid fa-circle-xmark text-danger fs-5 me-3"></i>
+                    {% else %}
+                        <i class="fa-solid fa-circle-info text-info fs-5 me-3"></i>
+                    {% endif %}
+                    <span class="fw-semibold">{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close ms-3" onclick="this.parentElement.remove()"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
 <div class="container my-2">
+
+    <!-- Title and Description -->
     <div class="mb-4">
-        <h2>Global Operational Access Control Matrix</h2>
-        <p class="text-muted small">Cross-reference grid showing active verification rules mapped across roles.</p>
+        <h1 class="pg-title">Permission <span class="accent">Matrix</span></h1>
+        <p class="text-muted small">Configure dynamic capabilities across all user roles globally.</p>
     </div>
 
-    <form method="POST" action="{% url 'usermgmt:permission_matrix' %}">
-        {% csrf_token %}
-        
-        <div class="table-responsive bg-white border rounded p-3 shadow-sm mb-4">
-            <table class="table table-bordered align-middle text-center mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-start align-middle" style="width: 40%">Capability Permission Scope Token</th>
-                        {% for role in roles %}
-                        <th class="align-middle">{{ role.name }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for perm in permissions %}
-                    <tr>
-                        <td class="text-start">
-                            <code class="text-danger">{{ perm.content_type.app_label }}.{{ perm.codename }}</code>
-                        </td>
-                        {% for role in roles %}
-                        <td>
-                            <input class="form-check-input shadow-none" 
-                                   type="checkbox" 
-                                   name="matrix_relations" 
-                                   value="{{ role.id }}_{{ perm.id }}"
-                                   {% if perm in role.permissions.all %}checked{% endif %}>
-                        </td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="sc-icon text-orange"><i class="fa-solid fa-user-shield"></i></div>
+                <div class="sc-num">{{ total_roles }}</div>
+                <div class="sc-label">Total System Roles</div>
+            </div>
         </div>
+        <div class="col-md-4">
+            <div class="stat-card s-orange">
+                <div class="sc-icon"><i class="fa-solid fa-key"></i></div>
+                <div class="sc-num">{{ total_permissions }}</div>
+                <div class="sc-label">Defined Permissions</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card s-black">
+                <div class="sc-icon"><i class="fa-solid fa-link"></i></div>
+                <div class="sc-num">{{ total_mappings }}</div>
+                <div class="sc-label">Configured Mappings</div>
+            </div>
+        </div>
+    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn btn-outline-secondary">
-                <i class="fa-solid fa-chevron-left me-1"></i> Dashboard
-            </a>
-            <button type="submit" class="btn btn-primary px-4 shadow-sm">
-                <i class="fa-solid fa-floppy-disk me-2"></i>Save Matrix Configurations
-            </button>
-        </div>
-    </form>
+    <!-- Permission Matrix Grid Card -->
+    <div class="card matrix-card rounded-0 p-4 mb-5">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-table-cells text-orange me-2"></i>Global Operational Matrix</h5>
+        <p class="text-muted mb-4 small">Hover over any capability cell to trace the relationship back to its role column and permission row.</p>
+
+        <form id="matrixForm" method="POST" action="{% url 'usermgmt:permission_matrix' %}">
+            {% csrf_token %}
+
+            <div class="matrix-table-wrap table-responsive mb-4">
+                <table class="matrix-table align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-start align-middle" style="width: 30%;">Capability Scope</th>
+                            {% for role in roles %}
+                            <th class="matrix-col-header" style="min-width: 100px;">{{ role.role_name }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for perm in permissions %}
+                        <tr class="matrix-row-item" data-row-idx="{{ forloop.counter }}">
+                            <td class="text-start fw-semibold py-3 border-end">
+                                <div class="d-flex flex-column">
+                                    <span class="text-dark">{{ perm.description }}</span>
+                                    <code class="text-orange small mt-1" style="font-size: 0.7rem;">usermgmt.{{ perm.permission_name }}</code>
+                                </div>
+                            </td>
+                            {% for role in roles %}
+                            <td class="matrix-cell border-end" 
+                                data-row="{{ parentloop.counter }}" 
+                                data-col="{{ forloop.counter }}"
+                                class="matrix-cell-hoverable">
+                                <input class="form-check-input matrix-checkbox" 
+                                       type="checkbox" 
+                                       name="matrix_relations" 
+                                       value="{{ role.id }}_{{ perm.id }}"
+                                       id="rel_{{ role.id }}_{{ perm.id }}"
+                                       {% if perm in role.permissions.all %}checked{% endif %}>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-2 border-dark">
+                <a href="{% url 'usermgmt:admin_dashboard' %}" class="btn-cancel rounded-0">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Dashboard
+                </a>
+                <button type="submit" class="btn-pravaah rounded-0">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Save Matrix Configurations
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- Save Confirmation Modal -->
+<div class="modal fade" id="confirmSaveModal" tabindex="-1" aria-labelledby="confirmSaveModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-2 border-dark rounded-0 shadow">
+      <div class="modal-header bg-dark text-white rounded-0 border-bottom border-warning">
+        <h5 class="modal-title fw-bold" id="confirmSaveModalLabel"><i class="fa-solid fa-circle-question text-warning me-2"></i>Confirm Matrix Changes</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="mb-0">Are you sure you want to update the global access control matrix? This will instantly modify operational permission gates for all active users under these roles.</p>
+      </div>
+      <div class="modal-footer border-0 p-3 bg-light d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-dark rounded-0 px-4 fw-bold text-uppercase" data-bs-dismiss="modal" style="letter-spacing:1px; font-size:0.75rem;">Cancel</button>
+        <button type="button" id="btnConfirmSaveSubmit" class="btn-pravaah rounded-0 px-4 py-2" style="font-size:0.75rem;">Confirm & Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Interactive cell, row, and column highlighting
+    const cells = document.querySelectorAll('.matrix-cell');
+    
+    cells.forEach(cell => {
+        cell.addEventListener('mouseenter', function() {
+            const colIdx = this.getAttribute('data-col');
+            const rowIdx = this.getAttribute('data-row');
+            
+            // Highlight row cells
+            this.parentElement.querySelectorAll('td').forEach(td => {
+                td.classList.add('bg-hover-row');
+            });
+            
+            // Highlight column cells
+            document.querySelectorAll(`.matrix-cell[data-col="${colIdx}"]`).forEach(td => {
+                td.classList.add('bg-hover-col');
+            });
+            
+            // Highlight header column
+            const headerCell = document.querySelectorAll('.matrix-table thead th')[colIdx];
+            if (headerCell) {
+                headerCell.style.color = 'var(--orange)';
+            }
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+            const colIdx = this.getAttribute('data-col');
+            
+            // Clear row highlighting
+            this.parentElement.querySelectorAll('td').forEach(td => {
+                td.classList.remove('bg-hover-row');
+            });
+            
+            // Clear column highlighting
+            document.querySelectorAll(`.matrix-cell[data-col="${colIdx}"]`).forEach(td => {
+                td.classList.remove('bg-hover-col');
+            });
+            
+            // Clear header highlighting
+            const headerCell = document.querySelectorAll('.matrix-table thead th')[colIdx];
+            if (headerCell) {
+                headerCell.style.color = '#fff';
+            }
+        });
+    });
+
+    // Save Confirmation Modal intercept
+    const matrixForm = document.getElementById('matrixForm');
+    const confirmSaveModal = new bootstrap.Modal(document.getElementById('confirmSaveModal'));
+    let isSaveConfirmed = false;
+
+    matrixForm.addEventListener('submit', function(e) {
+        if (!isSaveConfirmed) {
+            e.preventDefault();
+            confirmSaveModal.show();
+        }
+    });
+
+    // Handle submit from inside the Modal
+    document.getElementById('btnConfirmSaveSubmit').addEventListener('click', function() {
+        isSaveConfirmed = true;
+        confirmSaveModal.hide();
+        matrixForm.submit();
+    });
+
+    // Automatically fade out the toast notifications
+    document.addEventListener("DOMContentLoaded", function() {
+        const toasts = document.querySelectorAll('.custom-toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.5s ease-in-out';
+                toast.style.opacity = 0;
+                setTimeout(() => toast.remove(), 550);
+            }, 4000);
+        });
+    });
+</script>
 {% endblock %}

@@ -171,10 +171,6 @@
     .btn-logout-top:hover { background: #d94400 !important; }
 
     /* ─── SIDEBAR ─── */
-    <div style="color:red;">
-  Super Admin Check: {{ user|has_group:"Super Admin" }}
-</div>
-    
     .sidebar {
       position: fixed;
       top: var(--top-h); left: 0;
@@ -520,11 +516,13 @@
 
   <div class="topbar-right">
     
-    {% if user|has_group:"Super Admin" %}
-    <a href="#">
-    <i class="fa-solid fa-bell"></i>
-    Notifications
-</a>
+    {% if user.is_authenticated %}
+      {% if user|has_group:"Super Admin" %}
+        <a href="#">
+          <i class="fa-solid fa-bell"></i>
+          Notifications
+        </a>
+      {% endif %}
       <a href="{% url 'usermgmt:profile' %}">
         <div class="user-initials">{{ user.username|slice:":1"|upper }}</div>
         {{ user.username }}
@@ -559,6 +557,9 @@
         </button>
 
         <div class="sb-sub" id="s1">
+          <a href="{% url 'usermgmt:register' %}" class="sb-item">
+            <i class="fa-solid fa-user-plus"></i> Register User
+          </a>
 
           <button class="sb-item" onclick="toggleSub('s2',this)">
             <i class="fa-solid fa-shield-halved"></i> Roles & Permissions
@@ -589,15 +590,39 @@
         </div>
       </div>
 
+
       <hr class="sb-divider">
 
       <div class="sb-section">
-        <div class="sb-label">Monitoring</div>
-        <a href="{% url 'usermgmt:audit_logs' %}" class="sb-item">
-          <i class="fa-solid fa-clipboard-list"></i> Audit Logs
+        <div class="sb-label">Operations</div>
+        <a href="{% url 'usermgmt:participant_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-users"></i> Participant Management
         </a>
-        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
-          <i class="fa-solid fa-chart-line"></i> Activity Dashboard
+        <a href="{% url 'usermgmt:master_trainer_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+        <a href="{% url 'usermgmt:course_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-book"></i> Course Management
+        </a>
+        <a href="{% url 'usermgmt:hostel_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-hotel"></i> Hostel Management
+        </a>
+      </div>
+
+    {% elif user|has_group:"Training Manager" %}
+      <div class="sb-section">
+        <div class="sb-label">Training Management</div>
+        <a href="{% url 'usermgmt:participant_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-users"></i> Participant Management
+        </a>
+        <a href="{% url 'usermgmt:master_trainer_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+        <a href="{% url 'usermgmt:course_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-book"></i> Course Management
+        </a>
+        <a href="{% url 'usermgmt:hostel_management_placeholder' %}" class="sb-item">
+          <i class="fa-solid fa-hotel"></i> Hostel Management
         </a>
       </div>
 
@@ -610,47 +635,57 @@
         </a>
       </div>
 
-    {% elif user|has_group:"Training Manager" %}
+    {% elif user|has_group:"Master Trainer" %}
       <div class="sb-section">
-        <div class="sb-label">Training Management</div>
-        <a href="{% url 'usermgmt:users_list' %}" class="sb-item">
+        <div class="sb-label">Trainer Access</div>
+        <a href="{% url 'usermgmt:participant_management_placeholder' %}" class="sb-item">
           <i class="fa-solid fa-users"></i> Participant Management
         </a>
-        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+        <a href="{% url 'usermgmt:master_trainer_management_placeholder' %}" class="sb-item">
           <i class="fa-solid fa-user-tag"></i> Master Trainer Management
-        </a>
-        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
-          <i class="fa-solid fa-book"></i> Course Management
-        </a>
-        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
-          <i class="fa-solid fa-hotel"></i> Hostel Management
         </a>
       </div>
 
-    {% elif user|has_group:"Master Trainer" or user|has_group:"Trainer" %}
+      <hr class="sb-divider">
+
       <div class="sb-section">
-        <div class="sb-label">Trainer Access</div>
-        <a href="{% url 'usermgmt:users_list' %}" class="sb-item">
-          <i class="fa-solid fa-users"></i> Participant Management
-        </a>
-        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
-          <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        <div class="sb-label">Reports</div>
+        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+          <i class="fa-solid fa-file-invoice"></i> Reports
         </a>
       </div>
 
     {% elif user|has_group:"Hostel Admin" %}
       <div class="sb-section">
         <div class="sb-label">Hostel Management</div>
-        <a href="{% url 'usermgmt:activity_dashboard' %}" class="sb-item">
+        <a href="{% url 'usermgmt:hostel_management_placeholder' %}" class="sb-item">
           <i class="fa-solid fa-hotel"></i> Hostel Management
         </a>
       </div>
 
-    {% elif user|has_group:"Accounts Admin" or user|has_group:"Accounts" %}
+      <hr class="sb-divider">
+
+      <div class="sb-section">
+        <div class="sb-label">Reports</div>
+        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+          <i class="fa-solid fa-file-invoice"></i> Reports
+        </a>
+      </div>
+
+    {% elif user|has_group:"Accounts Admin" %}
       <div class="sb-section">
         <div class="sb-label">Accounts Management</div>
-        <a href="{% url 'usermgmt:roles_list' %}" class="sb-item">
+        <a href="{% url 'usermgmt:master_trainer_management_placeholder' %}" class="sb-item">
           <i class="fa-solid fa-user-tag"></i> Master Trainer Management
+        </a>
+      </div>
+
+      <hr class="sb-divider">
+
+      <div class="sb-section">
+        <div class="sb-label">Reports</div>
+        <a href="{% url 'usermgmt:reports' %}" class="sb-item">
+          <i class="fa-solid fa-file-invoice"></i> Reports
         </a>
       </div>
 
@@ -722,15 +757,34 @@
   function toggleSub(id, btn) {
     const sub = document.getElementById(id);
     const open = sub.classList.contains('open');
-    document.querySelectorAll('.sb-sub').forEach(s => s.classList.remove('open'));
-    document.querySelectorAll('.sb-item.is-open').forEach(b => b.classList.remove('is-open'));
-    if (!open) { sub.classList.add('open'); btn.classList.add('is-open'); }
+    
+    // Close only the sibling submenus at the same nesting level
+    const siblings = Array.from(sub.parentElement.children).filter(c => c.classList.contains('sb-sub') && c !== sub);
+    siblings.forEach(s => {
+      s.classList.remove('open');
+      const prev = s.previousElementSibling;
+      if (prev) prev.classList.remove('is-open');
+    });
+
+    if (open) {
+      sub.classList.remove('open');
+      btn.classList.remove('is-open');
+    } else {
+      sub.classList.add('open');
+      btn.classList.add('is-open');
+    }
   }
+
   document.querySelectorAll('.sb-item[href]').forEach(link => {
     if (link.href === window.location.href) {
       link.classList.add('active');
-      const sub = link.closest('.sb-sub');
-      if (sub) { sub.classList.add('open'); sub.previousElementSibling?.classList.add('is-open'); }
+      let parentSub = link.closest('.sb-sub');
+      while (parentSub) {
+        parentSub.classList.add('open');
+        const prev = parentSub.previousElementSibling;
+        if (prev) prev.classList.add('is-open');
+        parentSub = parentSub.parentElement.closest('.sb-sub');
+      }
     }
   });
 </script>

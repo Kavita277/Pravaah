@@ -418,9 +418,9 @@ USER <span style="color:#ff5c1a;">REPORTS</span>
             data-username="{{ user.username }}"
             data-fullname="{% if user.first_name or user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}—{% endif %}"
             data-email="{{ user.email }}"
-            data-role="{% for g in user.groups.all %}{{ g.name }}{% empty %}No Role{% endfor %}"
+            data-role="{% for r in user.roles.all %}{{ r.role_name }}{% empty %}{% if user.role %}{{ user.role.role_name }}{% else %}No Role{% endif %}{% endfor %}"
             data-status="{% if user.is_active %}Active{% else %}Inactive{% endif %}"
-            data-created="{{ user.date_joined|date:'d M Y H:i' }} UTC"
+            data-created="{{ user.created_at|date:'d M Y H:i' }} UTC"
             data-updated="{% if user.profile.updated_at %}{{ user.profile.updated_at|date:'d M Y H:i' }} UTC{% elif user.last_login %}{{ user.last_login|date:'d M Y H:i' }} UTC{% else %}Not set{% endif %}"
             data-lastlogin="{% if user.last_login %}{{ user.last_login|date:'d M Y H:i' }} UTC{% else %}Never{% endif %}"
           >
@@ -449,10 +449,17 @@ USER <span style="color:#ff5c1a;">REPORTS</span>
 
             <!-- Role -->
             <td>
-              {% for group in user.groups.all %}
-                <span class="role-tag">{{ group.name }}</span>
+              {% if user.role %}
+                <span class="role-tag">{{ user.role.role_name }}</span>
+              {% endif %}
+              {% for r in user.roles.all %}
+                {% if r != user.role %}
+                  <span class="role-tag">{{ r.role_name }}</span>
+                {% endif %}
               {% empty %}
-                <span class="no-role">No Role</span>
+                {% if not user.role %}
+                  <span class="no-role">No Role</span>
+                {% endif %}
               {% endfor %}
             </td>
 
@@ -467,8 +474,8 @@ USER <span style="color:#ff5c1a;">REPORTS</span>
 
             <!-- Created -->
             <td class="date-cell">
-              <div class="date-primary">{{ user.date_joined|date:"d M Y" }}</div>
-              <div class="date-time">{{ user.date_joined|date:"H:i" }} UTC</div>
+              <div class="date-primary">{{ user.created_at|date:"d M Y" }}</div>
+              <div class="date-time">{{ user.created_at|date:"H:i" }} UTC</div>
             </td>
 
             <!-- Updated -->

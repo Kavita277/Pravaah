@@ -231,13 +231,9 @@
                   <option value="" selected disabled>
                     Select assigned authorization role
                   </option>
-                  <option value="Participant">Participant</option>
-                  <option value="Trainer">Trainer</option>
-                  <option value="Manager">Manager</option>
-                  <option value="QA">QA</option>
-                  <option value="Admin">Admin</option>
-                  <option value="System Admin">System Admin</option>
-                  <option value="Super Admin">Super Admin</option>
+                  {% for r in roles %}
+                    <option value="{{ r.role_name }}">{{ r.role_name }}</option>
+                  {% endfor %}
                 </select>
               </div>
             </div>

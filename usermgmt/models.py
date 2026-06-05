@@ -1,118 +1,204 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-class User(AbstractUser):
+class CustomPermission(models.Model):
     """
-    TABLE 1: users (Extends Django's AbstractUser)
-    Contains all foundational credentials, personal details, contact info, 
-    and verification statuses for any user accessing PRAVAAH.
-    
-    Inherited Fields from AbstractUser:
-        - id (INT, Primary Key, Auto-increment) -> Acts as user_id
-        - username (VARCHAR, Unique)
-        - password (VARCHAR) -> Acts as password_hash
-        - first_name (VARCHAR)
-        - last_name (VARCHAR)
-        - is_staff (BOOLEAN)
-        - is_active (BOOLEAN) -> Tracks account activation/status (Active/Inactive)
-        - is_superuser (BOOLEAN)
-        - date_joined (DATETIME)
+    Custom Permission model mapping to 'permissions' table.
     """
-    # Custom attributes from registration requirements
-    email = models.EmailField(unique=True, max_length=254)  # Overriding to ensure strict uniqueness
-    mobile = models.CharField(max_length=15, blank=True, null=True)
-    
-    # Email Verification lifecycle tracking attributes
+    permission_id = models.AutoField(primary_key=True)
+    permission_name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'permissions'
+
+    @property
+    def id(self):
+        return self.permission_id
+
+    def __str__(self):
+        return self.permission_name
+
+
+class Role(models.Model):
+    """
+    Custom Role model mapping to 'roles' table.
+    """
+    role_id = models.AutoField(primary_key=True)
+    role_name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    permissions = models.ManyToManyField(
+        CustomPermission,
+        through='RolePermission',
+        related_name='roles',
+        blank=True
+    )
+
+    class Meta:
+        db_table = 'roles'
+
+    @property
+    def id(self):
+        return self.role_id
+
+    def __str__(self):
+        return self.role_name
+
+
+class RolePermission(models.Model):
+    """
+    Join table mapping to 'role_permissions' table.
+    """
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, db_column='role_id')
+    permission = models.ForeignKey(CustomPermission, on_delete=models.CASCADE, db_column='permission_id')
+
+    class Meta:
+        db_table = 'role_permissions'
+        unique_together = ('role', 'permission')
+
+
+class CustomUserManager(BaseUserManager):
+    """
+    Custom manager for custom User model.
+    """
+    def create_user(self, username, email, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field must be set')
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('status', 'Active')
+        return self.create_user(username, email, password, **extra_fields)
+
+
+class User(AbstractBaseUser):
+    """
+    Custom User model mapping to 'users' table.
+    """
+    user_id = models.AutoField(primary_key=True)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True, db_column='role_id')
+    username = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(max_length=150, unique=True)
+    password = models.CharField(max_length=255, db_column='password_hash')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+    status = models.CharField(max_length=20, default='Active')
+
+    # Django admin/system metadata fields
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+
+    # Verification lifecycle fields
     is_email_verified = models.BooleanField(default=False)
     email_verification_token = models.CharField(max_length=100, blank=True, null=True)
     token_created_at = models.DateTimeField(blank=True, null=True)
-    
+
     # Chronological timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Overriding groups and permissions relationships to avoid shared database clashes
-    groups = models.ManyToManyField(
-        Group,
-        related_name='usermgmt_user_set',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='usermgmt_user_permissions_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user_permissions',
+    roles = models.ManyToManyField(
+        Role,
+        through='UserRole',
+        related_name='users_set',
+        blank=True
     )
 
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['email']
+
     class Meta:
-        db_table = 'users'  # Forces the database to name the table exactly 'gaurav_user'
+        db_table = 'users'
+
+    @property
+    def is_active(self):
+        return self.status == 'Active'
+
+    @is_active.setter
+    def is_active(self, value):
+        self.status = 'Active' if value else 'Inactive'
+
+    @property
+    def id(self):
+        return self.user_id
+
+    def has_perm(self, perm, obj=None):
+        if self.is_superuser:
+            return True
+        from django.contrib.auth import get_backends
+        for backend in get_backends():
+            if hasattr(backend, 'has_perm'):
+                if backend.has_perm(self, perm, obj):
+                    return True
+        return False
+
+    def has_perms(self, perm_list, obj=None):
+        return all(self.has_perm(perm, obj) for perm in perm_list)
+
+    def has_module_perms(self, app_label):
+        if self.is_superuser:
+            return True
+        from django.contrib.auth import get_backends
+        for backend in get_backends():
+            if hasattr(backend, 'has_module_perms'):
+                if backend.has_module_perms(self, app_label):
+                    return True
+        return False
 
     def __str__(self):
         return f"{self.username} ({self.email})"
 
 
-class RBACPermissionProxy(Permission):
+class UserRole(models.Model):
     """
-    TABLE 2 & 3: roles & permissions Configuration
-    Proxy model registers system scopes into core permissions engine.
+    Join table mapping to 'user_roles' table.
     """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, db_column='role_id')
+
     class Meta:
-        proxy = True
-        permissions = (
-            # --- Higher-Level / Administrative Capabilities ---
-            ('can_view_admin_dashboard', 'Can view central security dashboard layout'),
-            ('can_view_permission_matrix', 'Can view global cross-reference matrix grid'),
-            ('can_modify_permissions', 'Can alter granular privileges or override tokens'),
-            ('can_manage_roles', 'Can create, update, or delete system groups'),
-            ('can_assign_roles', 'Can map user accounts to defined groups'),
-            
-            # --- Management Division Tokens ---
-            ('can_view_management_reports', 'Can read high-level analytical business summaries'),
-            ('can_approve_requests', 'Can authorize institutional operational overrides'),
-            
-            # --- Accounts / Finance Division Tokens ---
-            ('can_view_finance_dashboard', 'Can read accounting ledgers and payment histories'),
-            ('can_manage_finance', 'Can process invoices and update payment parameters'),
-            
-            # --- Quality Assurance (QA) Division Tokens ---
-            ('can_view_qa_logs', 'Can read automated testing output metrics and system reports'),
-            ('can_manage_qa_tickets', 'Can log, modify, or track software verification modules'),
-            
-            # --- Core Lower-Level Operational Read Permissions ---
-            ('can_view_student_profiles', 'Can read student records and profiles (Lower Level Access)'),
-            ('can_view_trainer_profiles', 'Can read trainer contact parameters (Lower Level Access)'),
-            ('can_view_course_details', 'Can read syllabus blueprints and batch timings (Lower Level Access)'),
-            ('can_view_hostel_status', 'Can read room vacancy layouts and allocation maps (Lower Level Access)'),
-        )
+        db_table = 'user_roles'
+        unique_together = ('user', 'role')
+
+
 
 
 class AuditLog(models.Model):
     """
-    TABLE 4: audit_logs
-    Tracks every structural database write, verification event, and authentication 
-    state action chronologically for compliance tracking.
+    Custom AuditLog model mapping to 'audit_logs' table.
     """
-    id = models.AutoField(primary_key=True)  # Explicit unique log entry identifier
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         User, 
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True, 
-        related_name='audit_logs'
+        related_name='audit_logs',
+        db_column='user_id'
     )
-    action = models.CharField(max_length=255)  # e.g., "User Registered", "Role Updated", "Logged Out"
-    module = models.CharField(max_length=50, default='usermgmt')  # Tracks source module workspace context
+    action = models.CharField(max_length=255)
+    module = models.CharField(max_length=50, default='usermgmt')
     ip_address = models.GenericIPAddressField(blank=True, null=True)
-    browser_agent = models.TextField(blank=True, null=True)  # Captures client browser properties for audit logs
-    timestamp = models.DateTimeField(auto_now_add=True)  # Equivalent to created_at for chronological sorting
+    browser_agent = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'audit_logs'  # Forces the database to name the table exactly 'audit_logs'
-        ordering = ['-timestamp']  # Pulls latest transactional updates first by default
+        db_table = 'audit_logs'
+        ordering = ['-timestamp']
 
     def __str__(self):
         user_str = self.user.username if self.user else "Anonymous"
-        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {user_str} - {self.action}"
+        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {user_str} - {self.action}"

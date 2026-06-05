@@ -160,22 +160,23 @@
 
                     <td>
 
-                        {% if user.groups.all %}
-
-                            {% for group in user.groups.all %}
-
+                        {% if user.roles.all or user.role %}
+                            {% if user.role %}
                             <span class="badge badge-role px-3 py-2">
-                                {{ group.name }}
+                                {{ user.role.role_name }}
                             </span>
-
+                            {% endif %}
+                            {% for role in user.roles.all %}
+                                {% if role != user.role %}
+                                <span class="badge badge-role px-3 py-2">
+                                    {{ role.role_name }}
+                                </span>
+                                {% endif %}
                             {% endfor %}
-
                         {% else %}
-
                             <span class="badge bg-secondary">
                                 No Role Assigned
                             </span>
-
                         {% endif %}
 
                     </td>

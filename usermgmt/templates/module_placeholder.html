@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %} PRAVAAH - {{ module_name }} {% endblock %}
+{% block content %}
+<div class="container my-5 text-center" style="max-width: 600px;">
+    <div class="card p-card shadow-sm">
+        <div class="p-card-head d-flex align-items-center justify-content-center gap-2">
+            <i class="{{ module_icon }} fa-2xl"></i>
+            <span class="fs-4">{{ module_name }}</span>
+        </div>
+        <div class="p-card-body py-5">
+            <h3 class="fw-bold mb-3 text-uppercase">Integration Pending</h3>
+            <p class="text-muted leading-relaxed mb-4">
+                This is a placeholder for the <strong>{{ module_name }}</strong> module.
+                It is currently undergoing final verification and will be fully integrated during integration day.
+            </p>
+            <div class="bdg bdg-green mb-4">
+                Status: Integration Ready
+            </div>
+            <div>
+                <a href="{% url 'usermgmt:user_home' %}" class="btn-p-outline">
+                    <i class="fa-solid fa-house me-2"></i>Return to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

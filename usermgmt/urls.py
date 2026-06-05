@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views  # Local views folder containing all combined views
-from .views import gate_approval
 
 app_name = 'usermgmt'
 
@@ -43,9 +42,11 @@ urlpatterns = [
     path('rbac/assign-permissions/', views.assign_permissions_view, name='assign_permissions'),
     path('rbac/matrix/', views.permission_matrix_view, name='permission_matrix'),
     
-    # --- Unified User Administration Lists (Person 2 & 3) ---
     path('users-list/', views.users_list, name='users_list'),          # Person 2 view endpoint
     path('rbac/users/', views.users_list_view, name='rbac_users_list'),
-    path('test/', views.test_page, name='test'),# Person 3 admin-level list endpoint
-    path('gate-approval/', gate_approval, name='getApproval'),
+    path('participant-management/', views.participant_management_view, name='participant_management_placeholder'),
+    path('master-trainer-management/', views.master_trainer_management_view, name='master_trainer_management_placeholder'),
+    path('course-management/', views.course_management_view, name='course_management_placeholder'),
+    path('hostel-management/', views.hostel_management_view, name='hostel_management_placeholder'),
+    path('gate-approval/', views.gate_approval_view, name='gate_approval'),
 ]

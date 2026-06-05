@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.utils.encoding import force_bytes, force_str
@@ -14,7 +13,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 
-from .models import User, AuditLog
+from .models import User, AuditLog, Role, CustomPermission, RolePermission
 from .forms import ProfileEditForm  # Ensure ProfileEditForm is defined in forms.py
 from commonservices.utils import send_email, get_client_ip
 
@@ -23,6 +22,15 @@ def _redirect_if_session_expired(request):
     if not request.user.is_authenticated:
         return redirect('usermgmt:session_expired')
     return None
+
+def _enforce_super_admin(user):
+    is_superadmin = user.is_superuser or (
+        user.role and user.role.role_name == 'Super Admin'
+    ) or user.roles.filter(role_name='Super Admin').exists()
+    if not is_superadmin:
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied("Access Denied: Super Admin role required.")
+
 
 def public_landing_view(request):
     # If the user is already authenticated, redirect them to their dashboard
@@ -90,7 +98,9 @@ def login_view(request):
            #     request.session['login_failures'] = failures
 
             # Dynamic Role-Based Redirect Gateways
-            groups = list(user.groups.values_list('name', flat=True))
+            groups = list(user.roles.values_list('role_name', flat=True))
+            if user.role:
+                groups.append(user.role.role_name)
             if user.is_superuser or 'Super Admin' in groups or 'System Admin' in groups:
                 return redirect('usermgmt:admin_dashboard')
                 
@@ -115,6 +125,12 @@ def login_view(request):
 
     return render(request, 'auth/login.html')
 def register_view(request):
+    if not request.user.is_authenticated:
+        return redirect('usermgmt:login')
+    _enforce_super_admin(request.user)
+
+    roles = Role.objects.all()
+
     if request.method == 'POST':
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
@@ -127,26 +143,26 @@ def register_view(request):
 
         if not all([first_name, last_name, username, email, password, confirm_password]):
             messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'roles': roles})
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'roles': roles})
 
         try:
             validate_password(password)
         except ValidationError as e:
             messages.error(request, ' '.join(e.messages))
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'roles': roles})
 
         try:
             with transaction.atomic():
                 if User.objects.filter(username=username).exists():
                     messages.error(request, 'Username already exists.')
-                    return render(request, 'auth/register.html')
+                    return render(request, 'auth/register.html', {'roles': roles})
                 if User.objects.filter(email=email).exists():
                     messages.error(request, 'Email already exists.')
-                    return render(request, 'auth/register.html')
+                    return render(request, 'auth/register.html', {'roles': roles})
 
                 user = User.objects.create_user(
                     username=username,
@@ -162,9 +178,10 @@ def register_view(request):
 
                 if role:
                     try:
-                        grp = Group.objects.get(name=role)
-                        user.groups.add(grp)
-                    except Group.DoesNotExist:
+                        grp = Role.objects.get(role_name=role)
+                        user.role = grp
+                        user.roles.add(grp)
+                    except Role.DoesNotExist:
                         pass
 
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -187,9 +204,9 @@ def register_view(request):
 
         except IntegrityError:
             messages.error(request, 'A user with that username or email already exists.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'roles': roles})
 
-    return render(request, 'auth/register.html')
+    return render(request, 'auth/register.html', {'roles': roles})
 
 
 def logout_view(request):
@@ -375,7 +392,18 @@ def verify_email_view(request, uidb64=None, token=None):
 
 @login_required
 def home(request):
-    return render(request, 'profile/user_dashboard.html')
+    total_users = User.objects.count()
+    active_users = User.objects.filter(status='Active').count()
+    total_roles = Role.objects.count()
+    total_audit_logs = AuditLog.objects.count()
+    
+    context = {
+        'total_users': total_users,
+        'active_users': active_users,
+        'total_roles': total_roles,
+        'total_audit_logs': total_audit_logs,
+    }
+    return render(request, 'profile/user_dashboard.html', context)
 
 
 @login_required
@@ -473,17 +501,17 @@ def report_result(request):
     users = User.objects.all()
 
     if role:
-        users = users.filter(groups__name=role)
+        users = users.filter(models.Q(role__role_name=role) | models.Q(roles__role_name=role)).distinct()
     
     if status == 'Active':
-        users = users.filter(is_active=True)
+        users = users.filter(status='Active')
     elif status == 'Inactive':
-        users = users.filter(is_active=False)
+        users = users.filter(status='Inactive')
 
     if start_date:
-        users = users.filter(date_joined__date__gte=start_date)
+        users = users.filter(created_at__date__gte=start_date)
     if end_date:
-        users = users.filter(date_joined__date__lte=end_date)
+        users = users.filter(created_at__date__lte=end_date)
 
     if login_start:
         users = users.filter(last_login__date__gte=login_start)
@@ -494,7 +522,7 @@ def report_result(request):
         from django.utils import timezone
         import datetime
         cutoff = timezone.now() - datetime.timedelta(days=int(joined_within))
-        users = users.filter(date_joined__gte=cutoff)
+        users = users.filter(created_at__gte=cutoff)
 
     if search:
         users = users.filter(
@@ -504,12 +532,12 @@ def report_result(request):
             models.Q(email__icontains=search)
         )
 
-    users_list = users.order_by('-date_joined')
+    users_list = users.order_by('-created_at')
 
     counts = {
         'total': users_list.count(),
-        'active': users_list.filter(is_active=True).count(),
-        'inactive': users_list.filter(is_active=False).count(),
+        'active': users_list.filter(status='Active').count(),
+        'inactive': users_list.filter(status='Inactive').count(),
         'new': users_list.count()
     }
 
@@ -524,6 +552,7 @@ def report_result(request):
 
 @login_required
 def users_list(request):
+    _enforce_super_admin(request.user)
     users = User.objects.all().order_by('-created_at')
     search = request.GET.get('search')
     
@@ -546,18 +575,18 @@ def users_list(request):
 def activity_dashboard(request):
     total_users = User.objects.count()
     total_logs = AuditLog.objects.count()
-    total_roles = Group.objects.count()
+    total_roles = Role.objects.count()
     login_count = AuditLog.objects.filter(action='Login Success').count()
     recent_logs = AuditLog.objects.all().order_by('-timestamp')[:5]
 
     # Cleaned role mapping references
-    admin_count = User.objects.filter(groups__name='Admin').count()
-    manager_count = User.objects.filter(groups__name='Manager').count()
-    qa_count = User.objects.filter(groups__name='QA').count()
+    admin_count = User.objects.filter(models.Q(role__role_name='Admin') | models.Q(roles__role_name='Admin')).distinct().count()
+    manager_count = User.objects.filter(models.Q(role__role_name='Manager') | models.Q(roles__role_name='Manager')).distinct().count()
+    qa_count = User.objects.filter(models.Q(role__role_name='QA') | models.Q(roles__role_name='QA')).distinct().count()
 
-    # Active flags map natively to boolean conditions
-    active_users = User.objects.filter(is_active=True).count()
-    inactive_users = User.objects.filter(is_active=False).count()
+    # Active flags map natively to status conditions
+    active_users = User.objects.filter(status='Active').count()
+    inactive_users = User.objects.filter(status='Inactive').count()
 
     login_actions = AuditLog.objects.filter(action='Login Success').count()
     logout_actions = AuditLog.objects.filter(action='Logout').count()
@@ -566,7 +595,7 @@ def activity_dashboard(request):
     recent_registrations = User.objects.order_by('-created_at')[:5]
     failed_logins = AuditLog.objects.filter(action__icontains='Failed').count()
     
-    top_role = Group.objects.annotate(total_users=models.Count('usermgmt_user_set')).order_by('-total_users').first()
+    top_role = Role.objects.annotate(total_users=models.Count('users_set') + models.Count('user_set')).order_by('-total_users').first()
 
     context = {
         'total_users': total_users,
@@ -599,11 +628,12 @@ def admin_dashboard_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
     context = {
         'total_users': User.objects.count(),
-        'total_roles': Group.objects.count(),
-        'total_permissions': Permission.objects.filter(content_type__app_label='usermgmt').count(),
+        'total_roles': Role.objects.count(),
+        'total_permissions': CustomPermission.objects.count(),
         'recent_logs': AuditLog.objects.all()[:5]
     }
     return render(request, 'rbac/admin_dashboard.html', context)
@@ -614,8 +644,9 @@ def roles_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
-    roles = Group.objects.all()
+    roles = Role.objects.all()
     return render(request, 'rbac/roles_list.html', {'roles': roles})
 
 
@@ -624,11 +655,12 @@ def role_form_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
     if request.method == 'POST':
         role_name = request.POST.get('role_name')
         if role_name:
-            Group.objects.get_or_create(name=role_name)
+            Role.objects.get_or_create(role_name=role_name)
             messages.success(request, f"Role '{role_name}' successfully created!")
             return redirect('usermgmt:roles_list')
     return render(request, 'rbac/role_form.html')
@@ -639,8 +671,9 @@ def permissions_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
-    permissions = Permission.objects.filter(content_type__app_label='usermgmt')
+    permissions = CustomPermission.objects.all()
     return render(request, 'rbac/permissions_list.html', {'permissions': permissions})
 
 
@@ -649,24 +682,59 @@ def assign_role_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
     users = User.objects.all()
-    roles = Group.objects.all()
+    roles = Role.objects.all()
     
+    total_users = User.objects.count()
+    active_users = User.objects.filter(status='Active').count()
+    unassigned_users = User.objects.filter(role__isnull=True).count()
+    
+    role_counts = []
+    for role in roles:
+        count = User.objects.filter(models.Q(role=role) | models.Q(roles=role)).distinct().count()
+        role_counts.append({
+            'role_name': role.role_name,
+            'count': count
+        })
+    
+    selected_user_id = request.GET.get('user_id') or request.POST.get('user_id')
+    selected_user = None
+    user_role_name = None
+    if selected_user_id:
+        try:
+            selected_user = User.objects.get(user_id=selected_user_id)
+            user_role_name = selected_user.role.role_name if selected_user.role else (selected_user.roles.first().role_name if selected_user.roles.exists() else None)
+        except User.DoesNotExist:
+            pass
+
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         selected_role_name = request.POST.get('role_name')
         
         if user_id and selected_role_name:
-            target_user = get_object_or_404(User, id=user_id)
-            target_user.groups.clear() 
-            assigned_group = Group.objects.get(name=selected_role_name)
-            target_user.groups.add(assigned_group)
+            target_user = get_object_or_404(User, user_id=user_id)
+            target_user.roles.clear() 
+            assigned_group = Role.objects.get(role_name=selected_role_name)
+            target_user.role = assigned_group
+            target_user.roles.add(assigned_group)
+            target_user.save()
             
             messages.success(request, f"Successfully assigned role '{selected_role_name}' to {target_user.username}!")
-            return redirect('usermgmt:admin_dashboard')
+            return redirect(reverse('usermgmt:assign_role') + f'?user_id={user_id}')
         
-    return render(request, 'rbac/assign_role.html', {'users': users, 'roles': roles})
+    context = {
+        'users': users,
+        'roles': roles,
+        'selected_user': selected_user,
+        'user_role_name': user_role_name,
+        'total_users': total_users,
+        'active_users': active_users,
+        'unassigned_users': unassigned_users,
+        'role_counts': role_counts,
+    }
+    return render(request, 'rbac/assign_role.html', context)
 
 
 @login_required
@@ -674,10 +742,38 @@ def assign_permissions_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
-    roles = Group.objects.all()
-    permissions = Permission.objects.filter(content_type__app_label='usermgmt')
-    return render(request, 'rbac/assign_permissions.html', {'roles': roles, 'permissions': permissions})
+    roles = Role.objects.all()
+    permissions = CustomPermission.objects.all()
+    
+    selected_role_id = request.GET.get('role_id') or request.POST.get('role_id')
+    selected_role = None
+    if selected_role_id:
+        try:
+            selected_role = Role.objects.get(role_id=selected_role_id)
+        except Role.DoesNotExist:
+            pass
+
+    if request.method == 'POST':
+        role_id = request.POST.get('role_id')
+        selected_permissions = request.POST.getlist('permissions')
+        if role_id:
+            try:
+                role = Role.objects.get(role_id=role_id)
+                perms = CustomPermission.objects.filter(permission_id__in=selected_permissions)
+                role.permissions.set(perms)
+                messages.success(request, f"Permissions updated successfully for role '{role.role_name}'!")
+            except Role.DoesNotExist:
+                messages.error(request, "Selected role does not exist.")
+            return redirect(reverse('usermgmt:assign_permissions') + f'?role_id={role_id}')
+
+    context = {
+        'roles': roles,
+        'permissions': permissions,
+        'selected_role': selected_role,
+    }
+    return render(request, 'rbac/assign_permissions.html', context)
 
 
 @login_required
@@ -685,13 +781,14 @@ def permission_matrix_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
-    roles = Group.objects.all()
-    permissions = Permission.objects.filter(content_type__app_label='usermgmt')
+    roles = Role.objects.all()
+    permissions = CustomPermission.objects.all()
     
     if request.method == 'POST':
         selected_pairings = request.POST.getlist('matrix_relations')
-        matrix_map = {role.id: [] for role in roles}
+        matrix_map = {role.role_id: [] for role in roles}
         
         for pairing in selected_pairings:
             if "_" in pairing:
@@ -702,13 +799,24 @@ def permission_matrix_view(request):
                     matrix_map[r_id].append(p_id)
         
         for role in roles:
-            perms_to_set = Permission.objects.filter(id__in=matrix_map[role.id])
+            perms_to_set = CustomPermission.objects.filter(permission_id__in=matrix_map[role.role_id])
             role.permissions.set(perms_to_set)
             
         messages.success(request, "Global Permission Matrix updated successfully!")
         return redirect('usermgmt:permission_matrix')
 
-    return render(request, 'rbac/permission_matrix.html', {'roles': roles, 'permissions': permissions})
+    total_roles = roles.count()
+    total_permissions = permissions.count()
+    total_mappings = RolePermission.objects.count()
+
+    context = {
+        'roles': roles,
+        'permissions': permissions,
+        'total_roles': total_roles,
+        'total_permissions': total_permissions,
+        'total_mappings': total_mappings,
+    }
+    return render(request, 'rbac/permission_matrix.html', context)
 
 
 @login_required
@@ -716,13 +824,14 @@ def users_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
+    _enforce_super_admin(request.user)
         
     selected_role_id = request.GET.get('role')
-    roles = Group.objects.all()
+    roles = Role.objects.all()
     users = User.objects.all()
     
     if selected_role_id:
-        users = users.filter(groups__id=selected_role_id)
+        users = users.filter(models.Q(role__role_id=selected_role_id) | models.Q(roles__role_id=selected_role_id)).distinct()
         
     context = {
         'users': users,
@@ -732,8 +841,34 @@ def users_list_view(request):
     return render(request, 'rbac/users_list.html', context)
 from django.shortcuts import render
 
-def test_page(request):
-    return render(request, 'test.html')
+@login_required
+def participant_management_view(request):
+    return render(request, 'module_placeholder.html', {
+        'module_name': 'Participant Management',
+        'module_icon': 'fa-solid fa-users'
+    })
 
-def gate_approval(request):
+@login_required
+def master_trainer_management_view(request):
+    return render(request, 'module_placeholder.html', {
+        'module_name': 'Master Trainer Management',
+        'module_icon': 'fa-solid fa-user-tie'
+    })
+
+@login_required
+def course_management_view(request):
+    return render(request, 'module_placeholder.html', {
+        'module_name': 'Course Management',
+        'module_icon': 'fa-solid fa-book'
+    })
+
+@login_required
+def hostel_management_view(request):
+    return render(request, 'module_placeholder.html', {
+        'module_name': 'Hostel Management',
+        'module_icon': 'fa-solid fa-hotel'
+    })
+
+@login_required
+def gate_approval_view(request):
     return render(request, 'prelaunch/getApproval.html')

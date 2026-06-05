@@ -143,18 +143,20 @@
                         {{ user_data.username }}
                     </h3>
 
-                    {% for group in user.groups.all %}
-
+                    {% for role in user.roles.all %}
                     <span class="profile-role">
-                        {{ group.name }}
+                        {{ role.role_name }}
                     </span>
-
                     {% empty %}
-
-                    <span class="profile-role">
-                        No Role
-                    </span>
-
+                        {% if user.role %}
+                        <span class="profile-role">
+                            {{ user.role.role_name }}
+                        </span>
+                        {% else %}
+                        <span class="profile-role">
+                            No Role
+                        </span>
+                        {% endif %}
                     {% endfor %}
 
                 </div>
