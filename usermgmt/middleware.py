@@ -40,26 +40,21 @@ class RoleBasedAccessControlMiddleware:
             return self.get_response(request)
 
 
-        # 3. Super Admin Sensitive Pages Route Protection
-        SUPER_ADMIN_ONLY_ROUTES = {
-            'register',
-            'users_list',
-            'rbac_users_list',
-            'admin_dashboard',
-            'roles_list',
-            'role_add',
-            'permissions_list',
-            'assign_role',
-            'assign_permissions',
-            'permission_matrix',
-        }
-        if current_route in SUPER_ADMIN_ONLY_ROUTES:
-            messages.error(request, "You do not have access. Please request the Admin to give you access.")
-            return redirect('usermgmt:user_home')
-
-        # 4. Define your Route-to-Permission Mapping Dictionary
+        # 3. Define your Route-to-Permission Mapping Dictionary
         # Maps the URL 'name' from urls.py to the permission codename from models.py
         PERMISSION_GATEWAY = {
+            'register': 'MANAGE_USERS',
+            'users_list': 'MANAGE_USERS',
+            'rbac_users_list': 'MANAGE_USERS',
+            
+            'admin_dashboard': 'ASSIGN_ROLES',
+            'roles_list': 'ASSIGN_ROLES',
+            'role_add': 'ASSIGN_ROLES',
+            'permissions_list': 'ASSIGN_ROLES',
+            'assign_role': 'ASSIGN_ROLES',
+            'assign_permissions': 'ASSIGN_ROLES',
+            'permission_matrix': 'ASSIGN_ROLES',
+
             'activity_dashboard': 'VIEW_AUDIT_LOGS',
             'audit_logs': 'VIEW_AUDIT_LOGS',
             
@@ -74,7 +69,7 @@ class RoleBasedAccessControlMiddleware:
             'hostel_management_placeholder': 'HOSTEL_ALLOCATION',
         }
 
-        # 5. Enforce Restrictions
+        # 4. Enforce Restrictions
         if current_route in PERMISSION_GATEWAY:
             required_permission = PERMISSION_GATEWAY[current_route]
             

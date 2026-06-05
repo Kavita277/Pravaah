@@ -23,13 +23,18 @@ def _redirect_if_session_expired(request):
         return redirect('usermgmt:session_expired')
     return None
 
-def _enforce_super_admin(user):
+def _enforce_super_admin(user, permission_name=None):
     is_superadmin = user.is_superuser or (
         user.role and user.role.role_name == 'Super Admin'
     ) or user.roles.filter(role_name='Super Admin').exists()
-    if not is_superadmin:
-        from django.core.exceptions import PermissionDenied
-        raise PermissionDenied("Access Denied: Super Admin role required.")
+    if is_superadmin:
+        return
+        
+    if permission_name and user.has_perm(f"usermgmt.{permission_name}"):
+        return
+
+    from django.core.exceptions import PermissionDenied
+    raise PermissionDenied("Access Denied: Super Admin or required permission required.")
 
 
 def public_landing_view(request):
@@ -127,7 +132,7 @@ def login_view(request):
 def register_view(request):
     if not request.user.is_authenticated:
         return redirect('usermgmt:login')
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'MANAGE_USERS')
 
     roles = Role.objects.all()
 
@@ -540,7 +545,7 @@ def report_result(request):
 
 @login_required
 def users_list(request):
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'MANAGE_USERS')
     users = User.objects.all().order_by('-created_at')
     search = request.GET.get('search')
     
@@ -616,7 +621,7 @@ def admin_dashboard_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     context = {
         'total_users': User.objects.count(),
@@ -632,7 +637,7 @@ def roles_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     roles = Role.objects.all()
     return render(request, 'rbac/roles_list.html', {'roles': roles})
@@ -643,7 +648,7 @@ def role_form_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     if request.method == 'POST':
         role_name = request.POST.get('role_name')
@@ -659,7 +664,7 @@ def permissions_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     permissions = CustomPermission.objects.all()
     return render(request, 'rbac/permissions_list.html', {'permissions': permissions})
@@ -670,7 +675,7 @@ def assign_role_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     users = User.objects.all()
     roles = Role.objects.all()
@@ -730,7 +735,7 @@ def assign_permissions_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     roles = Role.objects.all()
     permissions = CustomPermission.objects.all()
@@ -769,7 +774,7 @@ def permission_matrix_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'ASSIGN_ROLES')
         
     roles = Role.objects.all()
     permissions = CustomPermission.objects.all()
@@ -812,7 +817,7 @@ def users_list_view(request):
     redirect_response = _redirect_if_session_expired(request)
     if redirect_response:
         return redirect_response
-    _enforce_super_admin(request.user)
+    _enforce_super_admin(request.user, 'MANAGE_USERS')
         
     selected_role_id = request.GET.get('role')
     roles = Role.objects.all()
