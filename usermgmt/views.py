@@ -172,8 +172,8 @@ def register_view(request):
                     last_name=last_name,
                 )
                 user.mobile = mobile
-                user.is_active = False
-                user.is_email_verified = False
+                user.is_active = True
+                user.is_email_verified = True
                 user.save()
 
                 if role:
@@ -181,26 +181,14 @@ def register_view(request):
                         grp = Role.objects.get(role_name=role)
                         user.role = grp
                         user.roles.add(grp)
+                        user.save()
                     except Role.DoesNotExist:
                         pass
 
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                token = default_token_generator.make_token(user)
-                user.email_verification_token = token
-                user.token_created_at = timezone.now()
-                user.save(update_fields=['email_verification_token', 'token_created_at'])
-
-                verify_link = request.build_absolute_uri(reverse('usermgmt:verify_email_confirm', args=[uid, token]))
-                AuditLog.objects.create(user=user, action='User Registered', ip_address=get_client_ip(request), browser_agent=request.META.get('HTTP_USER_AGENT', ''))
+                AuditLog.objects.create(user=user, action='User Registered by Admin', ip_address=get_client_ip(request), browser_agent=request.META.get('HTTP_USER_AGENT', ''))
                 
-                try:
-                    send_email(to=user.email, subject='Verify your account', template='verify_email', context={'first_name': user.first_name, 'username': user.username, 'verify_link': verify_link})
-                    AuditLog.objects.create(user=user, action='Verification Email Sent', ip_address=get_client_ip(request))
-                except Exception:
-                    AuditLog.objects.create(user=user, action='Verification Email Enqueue Failed', ip_address=get_client_ip(request))
-
-                messages.success(request, 'Account created. Check your email for verification instructions.')
-                return redirect('usermgmt:verify_email')
+                messages.success(request, f"User account '{username}' successfully registered and activated!")
+                return redirect('usermgmt:rbac_users_list')
 
         except IntegrityError:
             messages.error(request, 'A user with that username or email already exists.')
