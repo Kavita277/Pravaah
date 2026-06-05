@@ -132,7 +132,7 @@
 
 {% if user.is_superuser or not user|has_group:"Trainer" %}
 
-<div class="col-md-4">
+<div class="col-md-3">
     <div class="pravaah-card h-100">
 
         <div class="pravaah-icon">
@@ -155,7 +155,7 @@
     </div>
 </div>
 
-<div class="col-md-4">
+<div class="col-md-3">
     <div class="pravaah-card h-100">
 
         <div class="pravaah-icon">
@@ -178,7 +178,7 @@
     </div>
 </div>
 
-<div class="col-md-4">
+<div class="col-md-3">
     <div class="pravaah-card h-100">
 
         <div class="pravaah-icon">
@@ -201,30 +201,7 @@
     </div>
 </div>
 
-<div class="col-md-6">
-    <div class="pravaah-card h-100">
-
-        <div class="pravaah-icon">
-            <i class="fa-solid fa-chart-line"></i>
-        </div>
-
-        <h5 class="fw-bold mt-3">
-            Activity Dashboard
-        </h5>
-
-        <p class="text-muted small mb-4">
-            Analyze user activity and usage trends.
-        </p>
-
-        <a href="{% url 'usermgmt:activity_dashboard' %}"
-           class="btn pravaah-btn w-100">
-            Open Dashboard
-        </a>
-
-    </div>
-</div>
-
-<div class="col-md-6">
+<div class="col-md-3">
     <div class="pravaah-card h-100">
 
         <div class="pravaah-icon">
@@ -284,7 +261,7 @@
 
                                 <i class="fa-solid fa-clipboard-check d-block mb-2"></i>
 
-                                Get Approval Checklist
+                                Gate Approval Checklist
 
                             </a>
 
@@ -297,7 +274,7 @@
 
                                 <i class="fa-solid fa-bullseye d-block mb-2"></i>
 
-                                Get Zero
+                                Gate Zero
 
                             </a>
 

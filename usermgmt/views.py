@@ -865,3 +865,10 @@ def hostel_management_view(request):
 @login_required
 def gate_approval_view(request):
     return render(request, 'prelaunch/getApproval.html')
+
+@login_required
+def main_dashboard_view(request):
+    return render(request, 'module_placeholder.html', {
+        'module_name': 'Main Dashboard',
+        'module_icon': 'fa-solid fa-house'
+    })

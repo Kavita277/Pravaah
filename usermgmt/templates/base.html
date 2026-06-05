@@ -540,9 +540,15 @@
 <aside class="sidebar">
   <div class="sb-section">
     <div class="sb-label">Overview</div>
-    <a href="{% url 'usermgmt:user_home' %}" class="sb-item {% block nav_home %}{% endblock %}">
-      <i class="fa-solid fa-house"></i> Dashboard
-    </a>
+    {% if user|has_group:"Super Admin" or user|has_group:"Training Manager" or user|has_group:"Master Trainer" %}
+      <a href="{% url 'usermgmt:main_dashboard_placeholder' %}" class="sb-item {% block nav_home %}{% endblock %}">
+        <i class="fa-solid fa-house"></i> Dashboard
+      </a>
+    {% else %}
+      <a href="{% url 'usermgmt:user_home' %}" class="sb-item {% block nav_home_fallback %}{% endblock %}">
+        <i class="fa-solid fa-house"></i> Settings
+      </a>
+    {% endif %}
   </div>
 
   {% if user.is_authenticated %}
@@ -713,6 +719,15 @@
         </a>
       </div>
 
+    {% endif %}
+
+    {% if user|has_group:"Super Admin" or user|has_group:"Training Manager" or user|has_group:"Master Trainer" %}
+      <hr class="sb-divider">
+      <div class="sb-section">
+        <a href="{% url 'usermgmt:user_home' %}" class="sb-item {% block nav_settings %}{% endblock %}">
+          <i class="fa-solid fa-gear"></i> Settings
+        </a>
+      </div>
     {% endif %}
 
   {% endif %}

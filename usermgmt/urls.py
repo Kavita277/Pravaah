@@ -49,4 +49,5 @@ urlpatterns = [
     path('course-management/', views.course_management_view, name='course_management_placeholder'),
     path('hostel-management/', views.hostel_management_view, name='hostel_management_placeholder'),
     path('gate-approval/', views.gate_approval_view, name='gate_approval'),
+    path('main-dashboard/', views.main_dashboard_view, name='main_dashboard_placeholder'),
 ]
