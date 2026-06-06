@@ -1,0 +1,5 @@
+team members: Kavita Gupta - 22
+              Anup Sawant - 4
+              Pranay Upadhyay - 15
+
+        sql statemments are in final_schema.sql

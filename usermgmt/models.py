@@ -10,6 +10,7 @@ class CustomPermission(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False  # This model is managed manually, not by Django's migrations
         db_table = 'permissions'
 
     @property
@@ -201,4 +202,4 @@ class AuditLog(models.Model):
 
     def __str__(self):
         user_str = self.user.username if self.user else "Anonymous"
-        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {user_str} - {self.action}"
+        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}] {user_str} - {self.action}"
