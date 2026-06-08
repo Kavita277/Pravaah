@@ -588,7 +588,7 @@ def activity_dashboard(request):
     recent_registrations = User.objects.order_by('-created_at')[:5]
     failed_logins = AuditLog.objects.filter(action__icontains='Failed').count()
     
-    top_role = Role.objects.annotate(total_users=models.Count('users_set') + models.Count('user_set')).order_by('-total_users').first()
+    top_role = Role.objects.annotate(total_users=models.Count('users_set') + models.Count('user')).order_by('-total_users').first()
 
     context = {
         'total_users': total_users,
